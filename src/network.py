@@ -17,7 +17,7 @@ def normalize_database(unnormalised_database,length,info='info not provided'):
     return np.array(normalized_database)
 
 
-def initialize_model(database):
+def initialize_model(database,model_string):
     model = tf.keras.applications.ResNet50(
         include_top=True,
         weights="imagenet",

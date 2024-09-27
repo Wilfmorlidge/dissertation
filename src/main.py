@@ -7,6 +7,5 @@ database, info = tfds.load('imagenet_v2', split='test', with_info=True)
 
 normalized_database = normalize_database(database,250)
 
-predictions = initialize_model(normalized_database)
+predictions = initialize_model(normalized_database,'resnet')
 
-print(predictions)
