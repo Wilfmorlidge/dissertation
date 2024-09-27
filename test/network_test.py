@@ -12,7 +12,7 @@ database, info = tfds.load('mnist', split='test', with_info=True)
 # adding Folder_2 to the system path
 sys.path.insert(0, './src')
 
-from network import resize_image, normalize_database, initialize_model
+from network import resize_image, normalize_database, run_prediction
 
 class BasicNetworkTests(unittest.TestCase):
     
@@ -23,9 +23,9 @@ class BasicNetworkTests(unittest.TestCase):
         self.assertIsInstance(normalize_database(database,10), np.ndarray)
         self.assertEqual(normalize_database(database,10).shape, (10, 224, 224, 1))
 
-    def test_initialize_model(self):
-        self.assertIsInstance(initialize_model(np.ones((2,224,224,3)),'resnet'), np.ndarray)
-        self.assertEqual((initialize_model(np.ones((2,224,224,3)),'resnet')).shape, (2,1000))
+    def test_run_prediction(self):
+        self.assertIsInstance(run_prediction(np.ones((2,224,224,3)),'resnet'), np.ndarray)
+        self.assertEqual((run_prediction(np.ones((2,224,224,3)),'resnet')).shape, (2,1000))
 
 
 if __name__ == '__main__':

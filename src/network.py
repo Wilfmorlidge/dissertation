@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import tensorflow_datasets as tfds
+from models import initialize_model
 
 
 def resize_image(image):
@@ -17,19 +18,25 @@ def normalize_database(unnormalised_database,length,info='info not provided'):
     return np.array(normalized_database)
 
 
-def initialize_model(database,model_string):
-    model = tf.keras.applications.ResNet50(
-        include_top=True,
-        weights="imagenet",
-        classifier_activation="softmax"
-    )
+def run_prediction(database,model_string = 'resnet'):
+    model = initialize_model(model_string)
 
     # Compile the model
     model.compile(optimizer='sgd', loss='mean_squared_error')
 
     # update to provide human readbale information, e.i what each image was and what it was classified as +
     # percentage of correct classifications, as well as the actual loss function value.
-    return model.predict(database)
+    scores = model.predict(database)
+    confidences = []
+    classes = []
+    for image in scores:
+        confidences.append(np.max(image))
+        classes.append(np.argmax(image))
+    dictionary = {'confidences': np.array(confidences),
+                  'classes': np.array(classes),
+    }
+    return dictionary
+
 
 
 
