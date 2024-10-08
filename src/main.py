@@ -8,6 +8,6 @@ database, info = tfds.load('imagenet_v2/topimages', split='test', shuffle_files=
 
 normalized_database = normalize_database(database,250)
 
-predictions = run_prediction(normalized_database,'resnet')
+predictions = run_prediction(normalized_database,'efficientnet')
 
 print(predictions)

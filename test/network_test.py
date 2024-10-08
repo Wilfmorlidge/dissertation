@@ -7,7 +7,7 @@ import sys
 import numpy.testing as npt
 import tensorflow_datasets as tfds
 
-database, info = tfds.load('mnist', split='test', with_info=True)
+database, info = tfds.load('imagenet_v2/topimages', split='test', with_info=True)
 
 # adding Folder_2 to the system path
 sys.path.insert(0, './src')
@@ -20,12 +20,17 @@ class BasicNetworkTests(unittest.TestCase):
         npt.assert_array_equal(resize_image(np.ones((32, 32,3))), tf.image.resize(np.ones((32, 32,3)), (224,224)))
 
     def test_normalize_database(self):
-        self.assertIsInstance(normalize_database(database,10), np.ndarray)
-        self.assertEqual(normalize_database(database,10).shape, (10, 224, 224, 1))
+        results = normalize_database(database,10)
+        self.assertIsInstance(results, dict)
+        self.assertIn('images',results)
+        self.assertEqual(np.array(results['images']).shape, (10, 224, 224, 3))
 
     def test_run_prediction(self):
-        self.assertIsInstance(run_prediction(np.ones((2,224,224,3)),'resnet'), np.ndarray)
-        self.assertEqual((run_prediction(np.ones((2,224,224,3)),'resnet')).shape, (2,1000))
+        results = run_prediction({'images':np.ones((2,224,224,3)), 'classifications':np.ones((2,1))},'resnet')
+        self.assertIsInstance(results, dict)
+        self.assertIn('confidences',results)
+        self.assertIn('classes',results)
+        self.assertIn('accuracy',results)
 
 
 if __name__ == '__main__':

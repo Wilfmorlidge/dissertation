@@ -3,17 +3,18 @@ import numpy as np
 import tensorflow_datasets as tfds
 from models import initialize_model
 
-
+#resize the image to the size expected by the network
 def resize_image(image):
     image = tf.image.resize(image, (224,224))
     return image
 
 def normalize_database(unnormalised_database,length,info='info not provided'):
     print(info)
-
+    # convert the database to the appropriate file type.
     database = tfds.as_numpy(unnormalised_database.take(length))
     normalized_database = {'images': [], 'classifications': []}
     counter = 0
+    # extract and pre-process each image in the dataset
     for entry in database:
         counter += 1
         print('currently processing image #' + str(counter))
@@ -28,9 +29,10 @@ def run_prediction(database,model_string = 'resnet'):
     # Compile the model
     model.compile(optimizer='sgd', loss='mean_squared_error')
 
-    # update to provide human readbale information, e.i what each image was and what it was classified as +
-    # percentage of correct classifications, as well as the actual loss function value.
+    # make predictions
     scores = model.predict(np.array(database['images']))
+
+    # provide human readable results
     confidences = []
     classes = []
     accuracy = 0
