@@ -14,7 +14,7 @@ def normalize_database(unnormalised_database,length,info='info not provided'):
     database = tfds.as_numpy(unnormalised_database.take(length))
     normalized_database = {'images': [], 'classifications': []}
     for entry in database:
-        normalized_database['images'].append(resize_image(entry['image']))
+        normalized_database['images'].append(tf.keras.applications.resnet.preprocess_input(resize_image(entry['image'])))
         normalized_database['classifications'].append(entry['label'])
     return normalized_database
 
