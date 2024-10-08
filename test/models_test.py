@@ -13,7 +13,7 @@ sys.path.insert(0, './src')
 from models import initialize_model
 
 class BasicModelSelectionTests(unittest.TestCase):
-    
+    # test that passing a different model name to the function causes the corresponding model to be returned
     def test_model_selection(self):
         npt.assert_array_equal(((initialize_model('resnet')).get_weights())[0],((tf.keras.applications.ResNet50(
         include_top=True,
