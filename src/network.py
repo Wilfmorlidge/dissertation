@@ -23,15 +23,10 @@ def normalize_database(unnormalised_database,length,info='info not provided'):
     return normalized_database
 
 
-def run_prediction(database,model_string = 'resnet'):
-    model = initialize_model(model_string)
 
-    # Compile the model
-    model.compile(optimizer='sgd', loss='mean_squared_error')
+def calculate_output_data(database,model):
 
-    # make predictions
     scores = model.predict(np.array(database['images']))
-
     # provide human readable results
     confidences = []
     classes = []

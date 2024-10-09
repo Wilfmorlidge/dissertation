@@ -1,19 +1,22 @@
 import tensorflow as tf
 import numpy as np
 import tensorflow_datasets as tfds
-from network import normalize_database,run_prediction
+from network import normalize_database,calculate_output_data
+from models import initialize_model
 from adversary import generate_pertubations
 
 
-adversary = 'none'
-model = 'resnet'
+adversary_string = 'test'
+model_string = 'resnet'
 
 database, info = tfds.load('imagenet_v2/topimages', split='test', shuffle_files=True, with_info=True)
 
 normalized_database = normalize_database(database,250)
 
-normalized_database = generate_pertubations(normalized_database,model,adversary)
+model = initialize_model(model_string)
 
-predictions = run_prediction(normalized_database,model)
+final_database = generate_pertubations(normalized_database,model,adversary_string)
+
+predictions = calculate_output_data(final_database,model)
 
 print(predictions)
