@@ -18,7 +18,7 @@ def normalize_database(unnormalised_database,length,info='info not provided'):
     for entry in database:
         counter += 1
         print('currently processing image #' + str(counter))
-        normalized_database['images'].append(tf.keras.applications.resnet.preprocess_input(resize_image(entry['image'])))
+        normalized_database['images'].append(np.array(tf.keras.applications.resnet.preprocess_input(resize_image(entry['image']))))
         normalized_database['classifications'].append(entry['label'])
     return normalized_database
 
