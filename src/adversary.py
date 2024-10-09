@@ -2,15 +2,13 @@ import numpy as np
 import tensorflow as tf
 
 def find_logit_value(image,logit,model):
-    truth = np.zeros((1,1000))
-    truth[0,(logit)] = 1
+    # this function calculates the gradient of network logic (the value for a possible class prior to the final softmax layer) with respect to a single input image)
     image = np.expand_dims(image, axis=0)
-    loss_fn = tf.keras.losses.CategoricalCrossentropy()
     with tf.GradientTape() as watcher:
+        #all calculations occuring in here are recorded by gradient tape, which allows the gradient of a valeu calculated in this indent to be automatically calculated
+        #with respect to a value passed into this indent.
         score = model(image)
-        loss = loss_fn(truth,score)
-        print(loss)
-    grad = watcher.gradient(loss,model.trainable_variables)
+    grad = watcher.gradient(model.trainable_variables,image)
 
 
 def generate_pertubations(database,model,adversary_string) :
