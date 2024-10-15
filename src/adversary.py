@@ -3,13 +3,16 @@ import tensorflow as tf
 
 def find_logit_value(image,logit,model):
     # this function calculates the gradient of network logic (the value for a possible class prior to the final softmax layer) with respect to a single input image)
-    image = np.expand_dims(image, axis=0)
+    image = tf.Variable(np.expand_dims(image, axis=0))
     with tf.GradientTape() as watcher:
+        watcher.watch(image)
         #all calculations occuring in here are recorded by gradient tape, which allows the gradient of a valeu calculated in this indent to be automatically calculated
         #with respect to a value passed into this indent.
         score = model(image)
-    grad = watcher.gradient(model.trainable_variables,image)
+        retrieved_logit = score[:1,(logit-1):logit]
 
+    grad = watcher.gradient(retrieved_logit,image)
+    print(grad)
 
 def generate_pertubations(database,model,adversary_string) :
     if adversary_string == 'none':
