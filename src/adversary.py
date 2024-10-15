@@ -10,14 +10,25 @@ def find_logit_value(image,logit,model):
         #with respect to a value passed into this indent.
         score = model(image)
         retrieved_logit = score[:1,(logit-1):logit]
+    return watcher.gradient(retrieved_logit,image)
 
-    grad = watcher.gradient(retrieved_logit,image)
-    print(grad)
+class AdversarialAttacks:
+    def DeepFool_iteration_step(self,image):
+        return np.zeros(image.shape)
+
+    def Carlini_Wagner_iteration_step(self,image):
+        return np.zeros(image.shape)
 
 def generate_pertubations(database,model,adversary_string) :
     if adversary_string == 'none':
         return database
-    elif adversary_string == 'test':
-        # this option exists for me to test the find logit value function and will be removed from the final product
-        macguffin = find_logit_value(database['images'][0],database['classifications'][0],model)
-        return database
+    else:
+        # this represents an extensible way of retrieving the iteration step function for the addition of pertubation.
+        iteration_method_name = f"{adversary_string}_iteration_step"
+        iteration_method = getattr(AdversarialAttacks(),iteration_method_name)
+        pertubed_database = {'images': [], 'classifications': database['classifications']}
+        #this causes the iteration function corresponding to the selected attack to be run for all images passed in
+        for iteration in range (0,len(np.array(database['images']))):
+            pertubed_database['images'].append(np.array(iteration_method(database['images'][iteration])))
+
+        return pertubed_database

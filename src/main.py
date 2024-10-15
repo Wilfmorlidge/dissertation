@@ -6,7 +6,7 @@ from models import initialize_model
 from adversary import generate_pertubations
 
 #this indicates which attack is being used
-adversary_string = 'test'
+adversary_string = 'Carlini_Wagner'
 #this indicates which model is being used
 model_string = 'resnet'
 
