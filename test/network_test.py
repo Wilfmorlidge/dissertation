@@ -28,7 +28,11 @@ class BasicNetworkTests(unittest.TestCase):
 
     #test that the function making predictions and providing output data performs as expected
     def test_run_prediction(self):
-        results = calculate_output_data({'images':np.ones((2,224,224,3)), 'classifications':np.ones((2,1))},'resnet')
+        results = calculate_output_data({'images':np.ones((2,224,224,3)), 'classifications':np.ones((2,1))},tf.keras.applications.ResNet50(
+        include_top=True,
+        weights="imagenet",
+        classifier_activation="softmax"
+        ))
         self.assertIsInstance(results, dict)
         self.assertIn('confidences',results)
         self.assertIn('classes',results)
