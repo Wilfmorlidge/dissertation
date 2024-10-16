@@ -23,23 +23,26 @@ class AdversarialAttacks:
         minimum_euclidean_distance = 9999999999999999999999
         minimum_heuristic = 99999999999999999999
         minimum_logit_derivative = 9999999999999999999
+        nearest_class = 0
         for counter in range(0,999):
+            print('reviewing class:' + str(counter))
             if counter != classification:
                 #this calculates the absolute distance between the class to be checked and the true class
                 current_absolute_boundary_distance = np.array(abs(scores[:1,counter] - scores[:1,(classification-1):classification]))[0,0]
-                print('current absolute boundary distance:' + str(current_absolute_boundary_distance))
                 #this calculates the euclidean distance between the derivatives of the logits for those classes
                 logit_derivative_for_class_being_checked = find_logit_derivative_value(image,counter,model)
                 current_euclidean_distance = np.linalg.norm(logit_derivative_for_class_being_checked - logit_derivative_for_true_class)
-                print('euclidean distance for current class' + str(current_euclidean_distance))
                 if current_absolute_boundary_distance/current_euclidean_distance < minimum_heuristic:
                     minimum_absolute_boundary_distance = current_absolute_boundary_distance
                     minimum_euclidean_distance = current_euclidean_distance
                     minimum_logit_derivative = logit_derivative_for_class_being_checked
+                    nearest_class = counter
         print('minimum absolute boundary_distance' + str(minimum_absolute_boundary_distance))
         print('minimum euclidean distance' + str(minimum_euclidean_distance))
         print('minimum logit derivative' + str(minimum_logit_derivative))
+        print('nearest class')
         print('step 2: calculate pertubation')
+
 
                 
 
