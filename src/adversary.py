@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-def find_logit_value(image,logit,model):
+def find_logit_derivative_value(image,logit,model):
     # this function calculates the gradient of network logic (the value for a possible class prior to the final softmax layer) with respect to a single input image)
     image = tf.Variable(np.expand_dims(image, axis=0))
     with tf.GradientTape() as watcher:
