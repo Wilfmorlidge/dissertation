@@ -6,15 +6,15 @@ from models import initialize_model
 from adversary import generate_pertubations
 
 #this indicates which attack is being used
-adversary_string = 'Carlini_Wagner'
+adversary_string = 'none'
 #this indicates which model is being used
-model_string = 'resnet'
+model_string = 'efficientnet'
 
 #this loads the database
 database, info = tfds.load('imagenet_v2/topimages', split='test', shuffle_files=True, with_info=True)
 
 # this resizes and pre-processes the database images for use by the appropriate model
-normalized_database = normalize_database(database,250)
+normalized_database = normalize_database(database,250,model_string)
 
 # this acquires the model
 model = initialize_model(model_string)

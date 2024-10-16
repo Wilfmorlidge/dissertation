@@ -8,7 +8,7 @@ def resize_image(image):
     image = tf.image.resize(image, (224,224))
     return image
 
-def normalize_database(unnormalised_database,length,info='info not provided'):
+def normalize_database(unnormalised_database,length,model_string,info='info not provided'):
     print(info)
     # convert the database to the appropriate file type.
     database = tfds.as_numpy(unnormalised_database.take(length))
@@ -16,9 +16,13 @@ def normalize_database(unnormalised_database,length,info='info not provided'):
     counter = 0
     # extract and pre-process each image in the dataset
     for entry in database:
+        pre_processing_method_name = f"tensorflow.keras.applications.{model_string}"
+        module = __import__(pre_processing_method_name, fromlist=['preprocess_input'])
+        # Get the preprocess_input function
+        pre_processing_method = getattr(module, 'preprocess_input')
         counter += 1
         print('currently processing image #' + str(counter))
-        normalized_database['images'].append(np.array(tf.keras.applications.resnet.preprocess_input(resize_image(entry['image']))))
+        normalized_database['images'].append(np.array(pre_processing_method(resize_image(entry['image']))))
         normalized_database['classifications'].append(entry['label'])
     return normalized_database
 
