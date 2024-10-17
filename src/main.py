@@ -6,7 +6,7 @@ from models import initialize_model
 from adversary import generate_pertubations
 
 #this indicates which attack is being used
-adversary_string = 'DeepFool'
+adversary_string = 'none'
 #this indicates which model is being used
 model_string = 'efficientnet'
 
@@ -14,7 +14,7 @@ model_string = 'efficientnet'
 database, info = tfds.load('imagenet_v2/topimages', split='test', shuffle_files=True, with_info=True)
 
 # this resizes and pre-processes the database images for use by the appropriate model
-normalized_database = normalize_database(database,10,model_string)
+normalized_database = normalize_database(database,20,model_string)
 
 # this acquires the model
 model = initialize_model(model_string)

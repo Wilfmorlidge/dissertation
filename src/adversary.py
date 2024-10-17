@@ -14,7 +14,9 @@ def find_logit_derivative_value(image,logit,model):
 
 class AdversarialAttacks:
     def DeepFool_iteration_step(self,image,classification,model):
+        print('this is the shape of the original image' + str(np.array(image).shape))
         image1 = np.expand_dims(image, axis=0)
+        print('this is the shape of the image altered ' + str(np.array(image1).shape))
         scores = model(image1)
         logit_derivative_for_true_class = find_logit_derivative_value(image,classification,model)
         print('step 1: identifying closest boundary via heuristic')
@@ -25,7 +27,8 @@ class AdversarialAttacks:
         minimum_logit_derivative = 9999999999999999999
         nearest_class = 0
         for counter in range(0,999):
-            print('reviewing class:' + str(counter))
+            if counter % 50 == 0:
+                print('reviewing class:' + str(counter))
             if counter != classification:
                 #this calculates the absolute distance between the class to be checked and the true class
                 current_absolute_boundary_distance = np.array(abs(scores[:1,counter] - scores[:1,(classification-1):classification]))[0,0]
@@ -42,11 +45,16 @@ class AdversarialAttacks:
         print('minimum logit derivative' + str(minimum_logit_derivative))
         print('nearest class')
         print('step 2: calculate pertubation')
-
+        #this component finds the pertubation to be applied to the image
+        pertubation = ((minimum_absolute_boundary_distance) / (minimum_euclidean_distance ** 2)) * (minimum_logit_derivative-logit_derivative_for_true_class)
+        print('pertubation:' + str(pertubation))
+        print('this is the shape of the pertubation' + str(np.squeeze(np.array(pertubation),axis=0).shape))
+        image = image + np.squeeze(np.array(pertubation),axis=0)
+        print('this is the shape of the pertubed image' + str(np.array(image).shape))
 
                 
 
-        return np.zeros(image.shape)
+        return image
 
     def Carlini_Wagner_iteration_step(self,image,classification,model):
         return np.zeros(image.shape)
@@ -64,4 +72,5 @@ def generate_pertubations(database,model,adversary_string) :
             print('pertubing image:' + str(iteration))
             pertubed_database['images'].append(np.array(iteration_method(database['images'][iteration],database['classifications'][iteration],model)))
 
+        print('this is the shape of the database' + str(np.array(pertubed_database['images']).shape))
         return pertubed_database
