@@ -15,7 +15,7 @@ adversary_string = 'none'
 model_string = 'resnet'
 
 #this loads the database
-database, info = tfds.load('imagenet_v2', split='validation', shuffle_files=True, with_info=True)
+database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_files=True, with_info=True)
 
 # this resizes and pre-processes the database images for use by the appropriate model
 normalized_database = normalize_database(database,10,model_string)

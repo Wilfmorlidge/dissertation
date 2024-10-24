@@ -8,6 +8,12 @@ def resize_image(image):
     image = tf.image.resize(image, (224,224))
     return image
 
+def re_label_image(label):
+    print(label)
+    mapping = {0:0,1:217,2:482,3:491,4:497,5:566,6:569,7:571,8:574,9:701}
+    print(mapping.get(label,label))
+    return mapping.get(label,label)
+
 def normalize_database(unnormalised_database,length,model_string,info='info not provided'):
     print(info)
     # convert the database to the appropriate file type.
@@ -23,7 +29,8 @@ def normalize_database(unnormalised_database,length,model_string,info='info not 
         counter += 1
         print('currently processing image #' + str(counter))
         normalized_database['images'].append(np.array(pre_processing_method(resize_image(entry['image']))))
-        normalized_database['classifications'].append(entry['label'])
+        fixed_label = re_label_image(entry['label'])
+        normalized_database['classifications'].append(fixed_label)
     return normalized_database
 
 
