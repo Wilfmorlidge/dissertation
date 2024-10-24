@@ -9,9 +9,7 @@ def resize_image(image):
     return image
 
 def re_label_image(label):
-    print(label)
     mapping = {0:0,1:217,2:482,3:491,4:497,5:566,6:569,7:571,8:574,9:701}
-    print(mapping.get(label,label))
     return mapping.get(label,label)
 
 def normalize_database(unnormalised_database,length,model_string,info='info not provided'):
