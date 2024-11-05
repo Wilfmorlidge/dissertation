@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import tensorflow_datasets as tfds
 from models import initialize_model
+from window import denormalize_and_save_image
 
 #resize the image to the size expected by the network
 def resize_image(image):
@@ -41,6 +42,7 @@ def calculate_output_data(database,model):
     classes = []
     accuracy = 0
     for counter in range(0,len(scores)):
+        denormalize_and_save_image(database['images'][counter],counter)
         confidences.append(np.max(scores[counter]))
         this_class = np.argmax(scores[counter])
         if this_class == database['classifications'][counter]:

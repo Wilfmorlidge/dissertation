@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
+
 def find_logit_derivative_value(image,logit,model):
     # this function calculates the gradient of network logic (the value for a possible class prior to the final softmax layer) with respect to a single input image)
     image = tf.Variable(np.expand_dims(image, axis=0))
@@ -16,8 +17,8 @@ class AdversarialAttacks:
     def DeepFool_iteration_step(self,image,classification,model):
         class_list = [0,217,482,491,497,566,569,571,574,701]
         print('this is the shape of the original image' + str(np.array(image).shape))
+        print('this is the original image' +str(np.array(image)))
         image1 = np.expand_dims(image, axis=0)
-        print('this is the shape of the image altered ' + str(np.array(image1).shape))
         scores = model(image1)
         logit_derivative_for_true_class = find_logit_derivative_value(image,classification,model)
         print('step 1: identifying closest boundary via heuristic')
@@ -51,13 +52,15 @@ class AdversarialAttacks:
         print('this is the shape of the pertubation' + str(np.squeeze(np.array(pertubation),axis=0).shape))
         image = image + np.squeeze(np.array(pertubation),axis=0)
         print('this is the shape of the pertubed image' + str(np.array(image).shape))
-
                 
 
         return image
 
     def Carlini_Wagner_iteration_step(self,image,classification,model):
         return np.zeros(image.shape)
+
+
+
 
 def generate_pertubations(database,model,adversary_string) :
     if adversary_string == 'none':
@@ -69,8 +72,14 @@ def generate_pertubations(database,model,adversary_string) :
         pertubed_database = {'images': [], 'classifications': database['classifications']}
         #this causes the iteration function corresponding to the selected attack to be run for all images passed in
         for iteration in range (0,len(np.array(database['images']))):
+
+            #display_1 = Image.fromarray(((database['images'][iteration] - database['images'][iteration].min()) / (database['images'][iteration].max() - database['images'][iteration].min()) * 255).astype(np.uint8))
+            #display_1.save(f'unpertubed_image_{iteration}.png')
+
+
             print('pertubing image:' + str(iteration))
-            pertubed_database['images'].append(np.array(iteration_method(database['images'][iteration],database['classifications'][iteration],model)))
+            pertubed_image = np.array(iteration_method(database['images'][iteration],database['classifications'][iteration],model))
+            pertubed_database['images'].append(pertubed_image)
 
         print('this is the shape of the database' + str(np.array(pertubed_database['images']).shape))
         return pertubed_database
