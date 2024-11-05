@@ -7,7 +7,7 @@ import sys
 import numpy.testing as npt
 import tensorflow_datasets as tfds
 
-database, info = tfds.load('imagenet_v2/topimages', split='test', with_info=True)
+database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_files=True, with_info=True)
 
 # adding Folder_2 to the system path
 sys.path.insert(0, './src')
