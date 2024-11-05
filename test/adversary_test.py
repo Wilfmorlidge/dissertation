@@ -33,7 +33,7 @@ class adversary_tests(unittest.TestCase):
         ),'none'),dictionary)
     
     def test_generate_pertubations_with_value(self):
-        dictionary = {'images': np.ones((3,224,224,3)), 'classifications': np.ones((3))}
+        dictionary = {'images': np.ones((3,224,224,3)), 'classifications': np.zeros((3))}
         AdversarialAttacks.DeepFool_iteration_step = MagicMock(return_value=None)
         generate_pertubations(dictionary,tf.keras.applications.ResNet50(
         include_top=True,
