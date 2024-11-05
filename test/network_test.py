@@ -6,6 +6,7 @@ import tensorflow as tf
 import sys
 import numpy.testing as npt
 import tensorflow_datasets as tfds
+from unittest.mock import MagicMock, patch
 
 database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_files=True, with_info=True)
 
@@ -13,6 +14,7 @@ database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_fi
 sys.path.insert(0, './src')
 
 from network import resize_image, normalize_database, calculate_output_data
+from window import denormalize_and_save_image
 
 class BasicNetworkTests(unittest.TestCase):
     #test that the resize function performs as expected
@@ -27,13 +29,15 @@ class BasicNetworkTests(unittest.TestCase):
         self.assertEqual(np.array(results['images']).shape, (10, 224, 224, 3))
 
     #test that the function making predictions and providing output data performs as expected
-    def test_run_prediction(self):
+    @patch('network.denormalize_and_save_image')
+    def test_calculate_output_data(self,mock_denormalize_and_save_image):
         results = calculate_output_data({'images':np.ones((2,224,224,3)), 'classifications':np.ones((2,1))},tf.keras.applications.ResNet50(
         include_top=True,
         weights="imagenet",
         classifier_activation="softmax"
         ))
         self.assertIsInstance(results, dict)
+        self.assertEqual(mock_denormalize_and_save_image.call_count,2)
         self.assertIn('confidences',results)
         self.assertIn('classes',results)
         self.assertIn('accuracy',results)
