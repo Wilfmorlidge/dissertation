@@ -37,7 +37,7 @@ class AdversarialAttacks:
         scores = model(image1)
         loop_counter = 0
         cumulative_pertubation = 0
-        overshoot_scalar = 1
+        overshoot_scalar = 0.02
         while (np.argmax(scores) == classification) and (loop_counter < 30):
             loop_counter += 1
             print('now entering pertubation cycle ' + str(loop_counter))
