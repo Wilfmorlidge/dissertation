@@ -25,14 +25,11 @@ def perform_arbitary_precision_addtion_of_numpy_arrays(array1,array2):
 class AdversarialAttacks:
     def DeepFool_iteration_step(self,image,classification,model):
         np.set_printoptions(precision=20)
-        #print('perhaps i am an idiot' + str(50-1e-13))
-        #print('maybe god is a fool' + str(np.array([50-1e-13], dtype=np.float64)))
+
         thing = tf.constant([0.12345678901234567890], dtype=tf.float64)
   
         image = image.astype(np.float64)
         class_list = [0,217,482,491,497,566,569,571,574,701]
-        #print('this is the shape of the original image' + str(np.array(image).shape))
-        #print('this is the original image' +str(np.array(image)))
         image1 = np.expand_dims(image, axis=0)
         scores = model(image1)
         loop_counter = 0
@@ -42,7 +39,6 @@ class AdversarialAttacks:
             loop_counter += 1
             print('now entering pertubation cycle ' + str(loop_counter))
             logit_derivative_for_true_class = find_logit_derivative_value(image,classification,model)
-            #print('step 1: identifying closest boundary via heuristic')
             #this iterates though all possible classes for each image
             minimum_absolute_boundary_distance = 999999999999999999999999999
             minimum_euclidean_distance = 9999999999999999999999
@@ -50,7 +46,6 @@ class AdversarialAttacks:
             minimum_logit_derivative = 9999999999999999999
             nearest_class = 0
             for entry in class_list:
-                #print('reviewing class:' + str(entry))
                 if entry != classification:
                     #this calculates the absolute distance between the class to be checked and the true class
                     current_absolute_boundary_distance = np.array(abs(scores[:1,entry] - scores[:1,(classification-1):classification]),dtype=np.float64)[0,0]
@@ -62,18 +57,9 @@ class AdversarialAttacks:
                         minimum_euclidean_distance = current_euclidean_distance
                         minimum_logit_derivative = logit_derivative_for_class_being_checked
                         nearest_class = entry
-            print('minimum absolute boundary_distance ' + str(minimum_absolute_boundary_distance))
-            print('minimum euclidean distance ' + str(minimum_euclidean_distance))
-            #print('minimum logit derivative ' + str(minimum_logit_derivative))
-            print('nearest class ' + str(nearest_class))
-            #print('step 2: calculate pertubation')
             #this component finds the pertubation to be applied to the image
             cumulative_pertubation = (((minimum_absolute_boundary_distance) / (minimum_euclidean_distance ** 2)) * (minimum_logit_derivative-logit_derivative_for_true_class)) + cumulative_pertubation
-            print('pertubation:' + str(cumulative_pertubation))
-            #print('this is the shape of the pertubation' + str(np.squeeze(np.array(pertubation),axis=0).shape))
             image = perform_arbitary_precision_addtion_of_numpy_arrays(image, (np.squeeze(np.array(cumulative_pertubation, dtype = np.longdouble),axis=0)*overshoot_scalar))
-            #print('this is the shape of the pertubed image' + str(np.array(image).shape))
-            print('this is the pertubed image' + str(image))
             image1 = np.expand_dims(image, axis=0)
             scores = model(image1)
                 
