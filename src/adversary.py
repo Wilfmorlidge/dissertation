@@ -27,7 +27,6 @@ class AdversarialAttacks:
         np.set_printoptions(precision=20)
  
         image = image.astype(np.float64)
-        print(image)
         class_list = [0,217,482,491,497,566,569,571,574,701]
         image1 = np.expand_dims(image, axis=0)
         scores = model(image1)
@@ -35,7 +34,7 @@ class AdversarialAttacks:
         print(scores.shape)
         loop_counter = 0
         cumulative_pertubation = 0
-        overshoot_scalar = 10
+        overshoot_scalar = 1000
         while (np.argmax(scores) == classification) and (loop_counter < 30):
             loop_counter += 1
             print('now entering pertubation cycle ' + str(loop_counter))
