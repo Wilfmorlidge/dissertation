@@ -15,8 +15,8 @@ def re_label_image(label):
 
 def normalize_database(unnormalised_database,length,model_string,info='info not provided'):
     print(info)
-    # convert the database to the appropriate file type.
-    database = tfds.as_numpy(unnormalised_database.take(length))
+    # shuffle the dataset and extract a subset for processing
+    database = tfds.as_numpy((unnormalised_database.shuffle(buffer_size=1000)).take(length))
     normalized_database = {'images': [], 'classifications': []}
     counter = 0
     # extract and pre-process each image in the dataset

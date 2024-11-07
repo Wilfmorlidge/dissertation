@@ -25,16 +25,17 @@ def perform_arbitary_precision_addtion_of_numpy_arrays(array1,array2):
 class AdversarialAttacks:
     def DeepFool_iteration_step(self,image,classification,model):
         np.set_printoptions(precision=20)
-
-        thing = tf.constant([0.12345678901234567890], dtype=tf.float64)
-  
+ 
         image = image.astype(np.float64)
+        print(image)
         class_list = [0,217,482,491,497,566,569,571,574,701]
         image1 = np.expand_dims(image, axis=0)
         scores = model(image1)
+        print(scores)
+        print(scores.shape)
         loop_counter = 0
         cumulative_pertubation = 0
-        overshoot_scalar = 0.02
+        overshoot_scalar = 10
         while (np.argmax(scores) == classification) and (loop_counter < 30):
             loop_counter += 1
             print('now entering pertubation cycle ' + str(loop_counter))
