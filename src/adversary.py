@@ -18,8 +18,6 @@ def perform_arbitary_precision_addtion_of_numpy_arrays(array1,array2):
     operand1 = np.vectorize(Decimal)(array1.astype(str))
     operand2 = np.vectorize(Decimal)(array2.astype(str))
     result = operand1 + operand2
-    #print('this is the result to arbitary precision' + str(result))
-    #print('this is the result to float64 precision' + str(np.array(result, dtype=np.longdouble)))
     return np.array(result, dtype=np.float64)
 
 class AdversarialAttacks:
@@ -30,12 +28,11 @@ class AdversarialAttacks:
         class_list = [0,217,482,491,497,566,569,571,574,701]
         image1 = np.expand_dims(image, axis=0)
         scores = model(image1)
-        print(scores)
-        print(scores.shape)
         loop_counter = 0
         cumulative_pertubation = 0
-        overshoot_scalar = 1000
-        while (np.argmax(scores) == classification) and (loop_counter < 30):
+        overshoot_scalar = 0.02
+        print('this is the overshoot scalar' + str(overshoot_scalar))
+        while (np.argmax(scores) == classification) and (loop_counter < 50):
             loop_counter += 1
             print('now entering pertubation cycle ' + str(loop_counter))
             logit_derivative_for_true_class = find_logit_derivative_value(image,classification,model)
@@ -48,7 +45,7 @@ class AdversarialAttacks:
             for entry in class_list:
                 if entry != classification:
                     #this calculates the absolute distance between the class to be checked and the true class
-                    current_absolute_boundary_distance = np.array(abs(scores[:1,entry] - scores[:1,(classification-1):classification]),dtype=np.float64)[0,0]
+                    current_absolute_boundary_distance = abs(scores[:1,entry] - scores[:1,classification])
                     #this calculates the euclidean distance between the derivatives of the logits for those classes
                     logit_derivative_for_class_being_checked = find_logit_derivative_value(image,entry,model)
                     current_euclidean_distance = np.linalg.norm(logit_derivative_for_class_being_checked - logit_derivative_for_true_class)
