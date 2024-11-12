@@ -49,11 +49,14 @@ class AdversarialAttacks:
                     #this calculates the euclidean distance between the derivatives of the logits for those classes
                     logit_derivative_for_class_being_checked = find_logit_derivative_value(image,entry,model)
                     current_euclidean_distance = np.linalg.norm(logit_derivative_for_class_being_checked - logit_derivative_for_true_class)
-                    if current_absolute_boundary_distance/current_euclidean_distance < minimum_heuristic:
+                    current_heuristic = current_absolute_boundary_distance/current_euclidean_distance
+                    if current_heuristic < minimum_heuristic:
                         minimum_absolute_boundary_distance = current_absolute_boundary_distance
                         minimum_euclidean_distance = current_euclidean_distance
                         minimum_logit_derivative = logit_derivative_for_class_being_checked
                         nearest_class = entry
+                        minimum_heuristic = current_heuristic
+                        print(nearest_class)
             #this component finds the pertubation to be applied to the image
             cumulative_pertubation = (((minimum_absolute_boundary_distance) / (minimum_euclidean_distance ** 2)) * (minimum_logit_derivative-logit_derivative_for_true_class)) + cumulative_pertubation
             image = perform_arbitary_precision_addtion_of_numpy_arrays(image, (np.squeeze(np.array(cumulative_pertubation, dtype = np.longdouble),axis=0)*overshoot_scalar))
