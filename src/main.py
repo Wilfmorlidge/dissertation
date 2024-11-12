@@ -18,7 +18,7 @@ model_string = 'resnet'
 database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_files=True, with_info=True)
 
 # this resizes and pre-processes the database images for use by the appropriate model
-normalized_database = normalize_database(database,10,model_string)
+normalized_database = normalize_database(database,2,model_string)
 
 # this acquires the model
 model = initialize_model(model_string)
