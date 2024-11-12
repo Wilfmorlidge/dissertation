@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 
 def denormalize_and_save_image(image,ident,type):
+    print(image.shape)
     display_2 = Image.fromarray(((image - image.min()) / (image.max() - image.min()) * 255).astype(np.uint8))
     display_2.save(f'./images/{type}/image_{ident}.png')
 

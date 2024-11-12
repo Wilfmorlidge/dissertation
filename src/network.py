@@ -36,6 +36,7 @@ def normalize_database(unnormalised_database,length,model_string,info='info not 
 
 
 def calculate_output_data(database,model):
+    print(database.keys())
 
     scores = model.predict(np.array(database['pertubed_images']))
     # provide human readable results

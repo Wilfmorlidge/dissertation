@@ -49,7 +49,7 @@ class AdversarialAttacks:
         class_list = [0,217,482,491,497,566,569,571,574,701]
         scores = model(np.expand_dims(image, axis=0))
         loop_counter = 0
-        cumulative_pertubation = 0
+        cumulative_pertubation = np.zeros((224,224,3))
         overshoot_scalar = 0.02
         print('this is the overshoot scalar' + str(overshoot_scalar))
 
