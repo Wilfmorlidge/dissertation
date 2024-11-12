@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow_datasets as tfds
 from models import initialize_model
 from window import denormalize_and_save_image
+from PIL import Image
 
 #resize the image to the size expected by the network
 def resize_image(image):
@@ -36,13 +37,15 @@ def normalize_database(unnormalised_database,length,model_string,info='info not 
 
 def calculate_output_data(database,model):
 
-    scores = model.predict(np.array(database['images']))
+    scores = model.predict(np.array(database['pertubed_images']))
     # provide human readable results
     confidences = []
     classes = []
     accuracy = 0
     for counter in range(0,len(scores)):
-        denormalize_and_save_image(database['images'][counter],counter)
+        denormalize_and_save_image(database['unpertubed_images'][counter],counter,'unpertubed')
+        denormalize_and_save_image(database['pertubations'][counter],counter,'pertubation')
+        denormalize_and_save_image(database['pertubed_images'][counter],counter,'pertubed')
         confidences.append(np.max(scores[counter]))
         this_class = np.argmax(scores[counter])
         if this_class == database['classifications'][counter]:

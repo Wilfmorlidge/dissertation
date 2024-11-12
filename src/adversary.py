@@ -1,6 +1,9 @@
 import numpy as np
 import tensorflow as tf
 from decimal import Decimal
+from PIL import Image
+
+from window import denormalize_and_save_image
 
 
 def find_logit_derivative_value(image,logit,model):
@@ -32,39 +35,43 @@ def optimise_DeepFool_class_values(optimizer_values,entry_class_pair,image,model
             optimizer_values = {'minimum_absolute_boundary_distance': current_absolute_boundary_distance,'minimum_euclidean_distance':current_euclidean_distance,'minimum_heuristic':current_heuristic,'minimum_logit_derivative':logit_derivative_for_class_being_checked,'nearest_class':entry_class_pair[0]}
     return optimizer_values
 
-def calculate_cumulative_pertubation_for_deepfool(optimizer_values,image,cumulative_pertubation,logit_derivative_for_true_class):
-        overshoot_scalar = 0.02
-        print('this is the overshoot scalar' + str(overshoot_scalar))
-        cumulative_pertubation = (((optimizer_values['minimum_absolute_boundary_distance']) / (optimizer_values['minimum_euclidean_distance'] ** 2)) * (optimizer_values['minimum_logit_derivative']-logit_derivative_for_true_class)) + cumulative_pertubation
-        image = perform_arbitary_precision_addtion_of_numpy_arrays(image, (np.squeeze(np.array(cumulative_pertubation, dtype = np.longdouble),axis=0)*overshoot_scalar))
+def calculate_cumulative_pertubation_for_deepfool(optimizer_values,image,cumulative_pertubation,logit_derivative_for_true_class,overshoot_scalar=0.02):
+        cumulative_pertubation = (np.squeeze(np.array((((optimizer_values['minimum_absolute_boundary_distance']) / (optimizer_values['minimum_euclidean_distance'] ** 2)) * (optimizer_values['minimum_logit_derivative']-logit_derivative_for_true_class)) + cumulative_pertubation), axis = 0)) * overshoot_scalar
+        image = perform_arbitary_precision_addtion_of_numpy_arrays(image, cumulative_pertubation)    
         return cumulative_pertubation, image
 
 class AdversarialAttacks:
     def DeepFool_iteration_step(self,image,classification,model):
+
+        #in this section necessary variables are defined
         np.set_printoptions(precision=20)
         image = image.astype(np.float64)
         class_list = [0,217,482,491,497,566,569,571,574,701]
         scores = model(np.expand_dims(image, axis=0))
         loop_counter = 0
         cumulative_pertubation = 0
+        overshoot_scalar = 0.02
+        print('this is the overshoot scalar' + str(overshoot_scalar))
+
+
         while (np.argmax(scores) == classification) and (loop_counter < 50):
             loop_counter += 1
             print('now entering pertubation cycle ' + str(loop_counter))
             logit_derivative_for_true_class = find_logit_derivative_value(image,classification,model)
             #this iterates though all possible classes for each image
-            
-            
+        
             optimizer_values = {'minimum_absolute_boundary_distance': 1e10,'minimum_euclidean_distance':1e10,'minimum_heuristic':1e10,'minimum_logit_derivative':1e10,'nearest_class':-1}
              
             for entry in class_list:
                 entry_class_pair = (entry,classification)
                 optimizer_values = optimise_DeepFool_class_values(optimizer_values,entry_class_pair,image,model,scores,logit_derivative_for_true_class)
+
             #this component finds the pertubation to be applied to the image
 
-            cumulative_pertubation,image = calculate_cumulative_pertubation_for_deepfool(optimizer_values,image,cumulative_pertubation,logit_derivative_for_true_class)
+            cumulative_pertubation,image = calculate_cumulative_pertubation_for_deepfool(optimizer_values,image,cumulative_pertubation,logit_derivative_for_true_class,overshoot_scalar)
             scores = model(np.expand_dims(image, axis=0))
 
-        return image
+        return image, cumulative_pertubation
 
     def Carlini_Wagner_iteration_step(self,image,classification,model):
         return np.zeros(image.shape)
@@ -79,17 +86,23 @@ def generate_pertubations(database,model,adversary_string) :
         # this represents an extensible way of retrieving the iteration step function for the addition of pertubation.
         iteration_method_name = f"{adversary_string}_iteration_step"
         iteration_method = getattr(AdversarialAttacks(),iteration_method_name)
-        pertubed_database = {'images': [], 'classifications': database['classifications']}
+        final_database = {'unpertubed_images': [],'pertubed_images': [],'pertubations': [], 'classifications': database['classifications']}
         #this causes the iteration function corresponding to the selected attack to be run for all images passed in
         for iteration in range (0,len(np.array(database['images']))):
 
-            #display_1 = Image.fromarray(((database['images'][iteration] - database['images'][iteration].min()) / (database['images'][iteration].max() - database['images'][iteration].min()) * 255).astype(np.uint8))
-            #display_1.save(f'unpertubed_image_{iteration}.png')
+            image = np.array(database['images'][iteration])
+            final_database['unpertubed_images'].append(image)
+          
 
+
+            #this causes the pertubation to be calculated
 
             print('pertubing image:' + str(iteration))
-            pertubed_image = np.array(iteration_method(database['images'][iteration],database['classifications'][iteration],model))
-            pertubed_database['images'].append(pertubed_image)
+            pertubed_image, pertubation = iteration_method(image,database['classifications'][iteration],model)
 
-        print('this is the shape of the database' + str(np.array(pertubed_database['images']).shape))
-        return pertubed_database
+
+
+            final_database['pertubed_images'].append(np.array(pertubed_image))
+            final_database['pertubations'].append(np.array(pertubation))
+
+        return final_database
