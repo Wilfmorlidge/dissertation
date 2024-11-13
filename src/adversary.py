@@ -24,6 +24,7 @@ def perform_arbitary_precision_addtion_of_numpy_arrays(array1,array2):
     return np.array(result, dtype=np.float64)
 
 def find_nearest_class_boundary(optimizer_values,entry_class_pair,image,model,scores,logit_derivative_for_true_class):
+    print(entry_class_pair)
     if entry_class_pair[0] != entry_class_pair[1]:
         #this calculates the absolute distance between the class to be checked and the true class
         current_absolute_boundary_distance = abs(scores[0][entry_class_pair[0]] - scores[0][entry_class_pair[1]])
@@ -41,20 +42,19 @@ def calculate_cumulative_pertubation_for_deepfool(optimizer_values,image,cumulat
         return cumulative_pertubation, image
 
 class AdversarialAttacks:
-    def DeepFool_iteration_step(self,image,classification,model):
+    def DeepFool_iteration_step(self,image,classification,model, class_list = [0,217,482,491,497,566,569,571,574,701], maximal_loop = 50):
 
         #in this section necessary variables are defined
         np.set_printoptions(precision=20)
         image = image.astype(np.float64)
-        class_list = [0,217,482,491,497,566,569,571,574,701]
         scores = model(np.expand_dims(image, axis=0))
         loop_counter = 0
-        cumulative_pertubation = np.zeros((224,224,3))
+        cumulative_pertubation = np.zeros((image.shape))
         overshoot_scalar = 0.2
         print('this is the overshoot scalar' + str(overshoot_scalar))
 
 
-        while (np.argmax(scores) == classification) and (loop_counter < 50):
+        while (np.argmax(scores) == classification) and (loop_counter < maximal_loop):
             loop_counter += 1
             print('now entering pertubation cycle ' + str(loop_counter))
             logit_derivative_for_true_class = find_logit_derivative_value(image,classification,model)
