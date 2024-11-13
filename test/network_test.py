@@ -31,13 +31,13 @@ class BasicNetworkTests(unittest.TestCase):
     #test that the function making predictions and providing output data performs as expected
     @patch('network.denormalize_and_save_image')
     def test_calculate_output_data(self,mock_denormalize_and_save_image):
-        results = calculate_output_data({'images':np.ones((2,224,224,3)), 'classifications':np.ones((2,1))},tf.keras.applications.ResNet50(
+        results = calculate_output_data({'unpertubed_images': np.ones((2,224,224,3)), 'pertubations': np.zeros((2,224,224,3)), 'pertubed_images':np.ones((2,224,224,3)), 'classifications':np.ones((2,1))},tf.keras.applications.ResNet50(
         include_top=True,
         weights="imagenet",
         classifier_activation="softmax"
         ))
         self.assertIsInstance(results, dict)
-        self.assertEqual(mock_denormalize_and_save_image.call_count,2)
+        self.assertEqual(mock_denormalize_and_save_image.call_count,6)
         self.assertIn('confidences',results)
         self.assertIn('classes',results)
         self.assertIn('accuracy',results)

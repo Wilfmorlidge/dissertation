@@ -23,16 +23,16 @@ def perform_arbitary_precision_addtion_of_numpy_arrays(array1,array2):
     result = operand1 + operand2
     return np.array(result, dtype=np.float64)
 
-def optimise_DeepFool_class_values(optimizer_values,entry_class_pair,image,model,scores,logit_derivative_for_true_class):
+def find_nearest_class_boundary(optimizer_values,entry_class_pair,image,model,scores,logit_derivative_for_true_class):
     if entry_class_pair[0] != entry_class_pair[1]:
         #this calculates the absolute distance between the class to be checked and the true class
-        current_absolute_boundary_distance = abs(scores[:1,entry_class_pair[0]] - scores[:1,entry_class_pair[1]])
+        current_absolute_boundary_distance = abs(scores[0][entry_class_pair[0]] - scores[0][entry_class_pair[1]])
         #this calculates the euclidean distance between the derivatives of the logits for those classes
         logit_derivative_for_class_being_checked = find_logit_derivative_value(image,entry_class_pair[0],model)
         current_euclidean_distance = np.linalg.norm(logit_derivative_for_class_being_checked - logit_derivative_for_true_class)
         current_heuristic = current_absolute_boundary_distance/current_euclidean_distance
         if current_heuristic < optimizer_values['minimum_heuristic']:
-            optimizer_values = {'minimum_absolute_boundary_distance': current_absolute_boundary_distance,'minimum_euclidean_distance':current_euclidean_distance,'minimum_heuristic':current_heuristic,'minimum_logit_derivative':logit_derivative_for_class_being_checked,'nearest_class':entry_class_pair[0]}
+            optimizer_values = {'minimum_absolute_boundary_distance': current_absolute_boundary_distance,'minimum_euclidean_distance':current_euclidean_distance,'minimum_heuristic':current_heuristic,'minimum_logit_derivative':logit_derivative_for_class_being_checked,'nearest_class':entry_class_pair[0]}       
     return optimizer_values
 
 def calculate_cumulative_pertubation_for_deepfool(optimizer_values,image,cumulative_pertubation,logit_derivative_for_true_class,overshoot_scalar=0.02):
@@ -50,7 +50,7 @@ class AdversarialAttacks:
         scores = model(np.expand_dims(image, axis=0))
         loop_counter = 0
         cumulative_pertubation = np.zeros((224,224,3))
-        overshoot_scalar = 0.02
+        overshoot_scalar = 0.2
         print('this is the overshoot scalar' + str(overshoot_scalar))
 
 
@@ -64,7 +64,7 @@ class AdversarialAttacks:
              
             for entry in class_list:
                 entry_class_pair = (entry,classification)
-                optimizer_values = optimise_DeepFool_class_values(optimizer_values,entry_class_pair,image,model,scores,logit_derivative_for_true_class)
+                optimizer_values = find_nearest_class_boundary(optimizer_values,entry_class_pair,image,model,scores,logit_derivative_for_true_class)
 
             #this component finds the pertubation to be applied to the image
 
