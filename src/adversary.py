@@ -81,7 +81,13 @@ class AdversarialAttacks:
 
 def generate_pertubations(database,model,adversary_string) :
     if adversary_string == 'none':
-        return database
+        final_database = {'unpertubed_images': [],'pertubed_images': [],'pertubations': [], 'classifications': database['classifications']}
+        for iteration in range (0,len(np.array(database['images']))):
+            image = np.array(database['images'][iteration])
+            final_database['unpertubed_images'].append(image)
+            final_database['pertubations'].append(np.zeros((image.shape)))
+            final_database['pertubed_images'].append(image)
+        return final_database
     else:
         # this represents an extensible way of retrieving the iteration step function for the addition of pertubation.
         iteration_method_name = f"{adversary_string}_iteration_step"

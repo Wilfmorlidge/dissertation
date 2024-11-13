@@ -13,7 +13,7 @@ database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_fi
 # adding Folder_2 to the system path
 sys.path.insert(0, './src')
 
-from adversary import generate_pertubations, AdversarialAttacks, find_logit_derivative_value,find_nearest_class_boundary
+from adversary import generate_pertubations, AdversarialAttacks, find_logit_derivative_value,find_nearest_class_boundary, calculate_cumulative_pertubation_for_deepfool
 
 class adversary_tests(unittest.TestCase):
     # test that passing a different model name to the function causes the corresponding model to be returned
@@ -54,7 +54,7 @@ class adversary_tests(unittest.TestCase):
         ])
         npt.assert_array_almost_equal(find_logit_derivative_value(np.ones((3)),1,model),[[ 1.577095e-04,  8.044306e-06, -7.756906e-05]], decimal= 2e-07)
 
-    def test_find_nearest_class_boundary_when_finding_new_minimum(self):
+    def test_find_nearest_class_boundary(self):
 
         optimizer_values = {'minimum_absolute_boundary_distance': 1e10,'minimum_euclidean_distance':1e10,'minimum_heuristic':1e10,'minimum_logit_derivative':1e10,'nearest_class':-1}
 
@@ -85,7 +85,14 @@ class adversary_tests(unittest.TestCase):
         npt.assert_array_almost_equal(test_data['minimum_logit_derivative'],dictionary['minimum_logit_derivative'], decimal = 2e-04)
         self.assertEqual(test_data['nearest_class'],dictionary['nearest_class'])
 
-
-
+    def test_calculate_cumulative_pertubation_for_deepfool(self):
+        optimizer_values = {'minimum_absolute_boundary_distance': 6.099999999997774e-05,'minimum_euclidean_distance':0.00023850034309222826,'minimum_heuristic':0.25576483123292193,'minimum_logit_derivative':np.array([[-5.41134759e-05,  6.78940123e-05,  1.42538847e-05]]),'nearest_class':1}
+        image = np.ones(3)
+        cumulative_pertubation = np.full((3),1e-08)
+        logit_derivative_for_true_class = np.array([[ 1.577095e-04,  8.044306e-06, -7.756906e-05]])
+        overshoot_scalar = 0.02
+        test_data = calculate_cumulative_pertubation_for_deepfool(optimizer_values,image,cumulative_pertubation,logit_derivative_for_true_class,overshoot_scalar)
+        npt.assert_array_almost_equal(test_data[0],[-0.004543,  0.001284,  0.001969], decimal=1e-06)
+        npt.assert_array_almost_equal(test_data[1],[ 0.995457,  1.001284,  1.001969], decimal=1e-06)
 if __name__ == '__main__':
     unittest.main()
