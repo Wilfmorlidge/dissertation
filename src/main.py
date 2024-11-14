@@ -10,7 +10,7 @@ print(tf.test.is_built_with_cuda())
 print(tf.config.list_physical_devices('GPU'))
 
 #this indicates which attack is being used
-adversary_string = 'none'
+adversary_string = 'DeepFool'
 #this indicates which model is being used
 model_string = 'efficientnet'
 
@@ -18,7 +18,7 @@ model_string = 'efficientnet'
 database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_files=True, with_info=True)
 
 # this resizes and pre-processes the database images for use by the appropriate model
-normalized_database = normalize_database(database,5,model_string)
+normalized_database = normalize_database(database,25,model_string)
 
 # this acquires the model
 model = initialize_model(model_string)

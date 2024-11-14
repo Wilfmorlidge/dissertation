@@ -110,11 +110,6 @@ class adversary_tests(unittest.TestCase):
 
         class_list = [0,1,2]
         test_data = AdversarialAttacks.DeepFool_iteration_step(self,image,classification,model,class_list)
-        print(test_data)
-        print(test_data[0])
-        print(test_data[1].shape)
-        print(np.argmax(model(np.expand_dims(image, axis=0))))
-        print(np.argmax(model(np.expand_dims(test_data[0], axis=0))))
         npt.assert_array_almost_equal(test_data[0], [ 7.760640e-01,  1.063276e+00,  1.097073e+00],decimal=1e-02)
         npt.assert_array_almost_equal(test_data[1],[-2.332242e-21,  6.590697e-22,  1.010983e-21], decimal=1e-26)
     

@@ -24,7 +24,6 @@ def perform_arbitary_precision_addtion_of_numpy_arrays(array1,array2):
     return np.array(result, dtype=np.float64)
 
 def find_nearest_class_boundary(optimizer_values,entry_class_pair,image,model,scores,logit_derivative_for_true_class):
-    print(entry_class_pair)
     if entry_class_pair[0] != entry_class_pair[1]:
         #this calculates the absolute distance between the class to be checked and the true class
         current_absolute_boundary_distance = abs(scores[0][entry_class_pair[0]] - scores[0][entry_class_pair[1]])
