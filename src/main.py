@@ -10,7 +10,7 @@ print(tf.test.is_built_with_cuda())
 print(tf.config.list_physical_devices('GPU'))
 
 #this indicates which attack is being used
-adversary_string = 'DeepFool'
+adversary_string = 'Carlini_Wagner'
 #this indicates which model is being used
 model_string = 'resnet'
 #this indicates which dataset is being used

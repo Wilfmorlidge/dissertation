@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from decimal import Decimal
 from PIL import Image
+import random
 
 from window import denormalize_and_save_image
 
@@ -40,6 +41,36 @@ def calculate_cumulative_pertubation_for_deepfool(optimizer_values,image,cumulat
         image = perform_arbitary_precision_addtion_of_numpy_arrays(image, cumulative_pertubation)    
         return cumulative_pertubation, image
 
+def calculate_class_term_derivative_for_carlini_wagner_loss_function(image,model,learning_rate,target_class,k):
+        image = tf.Variable(image)
+        learning_rate = tf.constant(learning_rate)
+        target_class = tf.constant(target_class)
+        k = tf.constant([k])
+        with tf.GradientTape() as watcher:
+            watcher.watch(image)
+            scores = model(image)
+            retrieved_logit = scores[:1,target_class]
+            if target_class == 0:
+                filtered_scores = scores[:,1:]
+            else:
+                filtered_scores = tf.concat([scores[:target_class], scores[target_class+1:]], axis=0)
+                print(filtered_scores)
+            maximal_logit = tf.reduce_max(filtered_scores)
+            comparable_value = maximal_logit - retrieved_logit
+            final = tf.reduce_max([comparable_value,k])
+            weighted_result = learning_rate * final
+        return np.array(watcher.gradient(weighted_result,image))
+    
+
+def calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image):
+    image = tf.Variable(tf.cast((np.expand_dims(image, axis=0)), tf.float64))
+    pertubed_image = tf.constant(tf.cast((np.expand_dims(pertubed_image, axis=0)), tf.float64))
+    with tf.GradientTape() as watcher:
+        watcher.watch(image)
+        l2_norm = tf.norm(image - pertubed_image, ord='euclidean')
+    return np.array(watcher.gradient(l2_norm,image))
+
+
 class AdversarialAttacks:
     def DeepFool_iteration_step(self,image,classification,model, class_list, maximal_loop = 50):
 
@@ -72,7 +103,42 @@ class AdversarialAttacks:
 
         return image, cumulative_pertubation
 
-    def Carlini_Wagner_iteration_step(self,image,classification,model):
+    def Carlini_Wagner_iteration_step(self,image,classification,model, class_list, maximal_loop = 50):
+        np.set_printoptions(precision=20)
+        #target_class = random.choice(class_list)
+        #[0,217,482,491,497,566,569,571,574,701]
+        target_class = 0
+        k = -0.95
+        starting_points = 5
+        learning_rate = 0.02
+        outputs= []
+        for entry in np.random.rand(starting_points,224,224,3):
+            print('it didnt crash on starting point calculation')
+            pertubation_delta = entry
+            image = image
+            pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(image, pertubation_delta)
+            scores = model(np.expand_dims(pertubed_image, axis=0))
+            loss = np.linalg.norm(image - pertubed_image) + (learning_rate *max((max(np.delete(scores,target_class)) -scores[:1,target_class]),k))
+            print('it didnt crash on loss calculation')
+            counter = 0
+            print(str(np.argmax(scores)))
+            print(str(target_class))
+            while (not(np.argmax(scores) == target_class)) and (counter < maximal_loop):
+                class_term_derivative = calculate_class_term_derivative_for_carlini_wagner_loss_function(pertubed_image,model,learning_rate,target_class,k)
+                print('it didnt crash on class term derivative calculation')
+                euclidean_term_derivative = calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image)
+                print('it didnt crash on the euclidean term derivative calculation')
+                pertubation_delta = euclidean_term_derivative + class_term_derivative
+                image = pertubed_image
+                pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(pertubed_image, pertubation_delta)
+                scores = model(pertubed_image)
+            outputs.append((pertubed_image,loss))
+
+
+
+        print(outputs)
+
+
         return np.zeros(image.shape)
 
 

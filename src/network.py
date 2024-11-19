@@ -11,7 +11,6 @@ def resize_image(image):
     return image
 
 def re_label_image(label,class_list):
-    print('this is one of the dumber problesm we have had'+ str(label))
     mapping = {i: class_list[i] for i in range(10)}
     return mapping.get(label,label)
 
