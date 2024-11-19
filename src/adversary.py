@@ -41,7 +41,7 @@ def calculate_cumulative_pertubation_for_deepfool(optimizer_values,image,cumulat
         return cumulative_pertubation, image
 
 class AdversarialAttacks:
-    def DeepFool_iteration_step(self,image,classification,model, class_list = [0,217,482,491,497,566,569,571,574,701], maximal_loop = 50):
+    def DeepFool_iteration_step(self,image,classification,model, class_list, maximal_loop = 50):
 
         #in this section necessary variables are defined
         np.set_printoptions(precision=20)
@@ -78,7 +78,7 @@ class AdversarialAttacks:
 
 
 
-def generate_pertubations(database,model,adversary_string) :
+def generate_pertubations(database,model,adversary_string,class_list) :
     if adversary_string == 'none':
         final_database = {'unpertubed_images': [],'pertubed_images': [],'pertubations': [], 'classifications': database['classifications']}
         for iteration in range (0,len(np.array(database['images']))):
@@ -103,7 +103,7 @@ def generate_pertubations(database,model,adversary_string) :
             #this causes the pertubation to be calculated
 
             print('pertubing image:' + str(iteration))
-            pertubed_image, pertubation = iteration_method(image,database['classifications'][iteration],model)
+            pertubed_image, pertubation = iteration_method(image,database['classifications'][iteration],model,class_list)
 
 
 

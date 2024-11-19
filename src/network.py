@@ -10,11 +10,12 @@ def resize_image(image):
     image = tf.image.resize(image, (224,224))
     return image
 
-def re_label_image(label):
-    mapping = {0:0,1:217,2:482,3:491,4:497,5:566,6:569,7:571,8:574,9:701}
+def re_label_image(label,class_list):
+    print('this is one of the dumber problesm we have had'+ str(label))
+    mapping = {i: class_list[i] for i in range(10)}
     return mapping.get(label,label)
 
-def normalize_database(unnormalised_database,length,model_string,info='info not provided'):
+def normalize_database(unnormalised_database,length,model_string,class_list, info='info not provided'):
     print(info)
     # shuffle the dataset and extract a subset for processing
     database = tfds.as_numpy((unnormalised_database.shuffle(buffer_size=1000)).take(length))
@@ -29,8 +30,9 @@ def normalize_database(unnormalised_database,length,model_string,info='info not 
         counter += 1
         print('currently processing image #' + str(counter))
         normalized_database['images'].append(np.array(pre_processing_method(resize_image(entry['image']))))
-        fixed_label = re_label_image(entry['label'])
+        fixed_label = re_label_image(entry['label'], class_list)
         normalized_database['classifications'].append(fixed_label)
+    print(normalized_database['classifications'])
     return normalized_database
 
 
