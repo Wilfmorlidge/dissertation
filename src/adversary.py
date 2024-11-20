@@ -54,7 +54,6 @@ def calculate_class_term_derivative_for_carlini_wagner_loss_function(image,model
                 filtered_scores = scores[:,1:]
             else:
                 filtered_scores = tf.concat([scores[:target_class], scores[target_class+1:]], axis=0)
-                print(filtered_scores)
             maximal_logit = tf.reduce_max(filtered_scores)
             comparable_value = maximal_logit - retrieved_logit
             final = tf.reduce_max([comparable_value,k])
@@ -63,8 +62,8 @@ def calculate_class_term_derivative_for_carlini_wagner_loss_function(image,model
     
 
 def calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image):
-    image = tf.Variable(tf.cast((np.expand_dims(image, axis=0)), tf.float64))
-    pertubed_image = tf.constant(tf.cast((np.expand_dims(pertubed_image, axis=0)), tf.float64))
+    image = tf.Variable(tf.cast(image, tf.float64))
+    pertubed_image = tf.constant(tf.cast(pertubed_image, tf.float64))
     with tf.GradientTape() as watcher:
         watcher.watch(image)
         l2_norm = tf.norm(image - pertubed_image, ord='euclidean')
@@ -105,41 +104,67 @@ class AdversarialAttacks:
 
     def Carlini_Wagner_iteration_step(self,image,classification,model, class_list, maximal_loop = 50):
         np.set_printoptions(precision=20)
-        #target_class = random.choice(class_list)
-        #[0,217,482,491,497,566,569,571,574,701]
-        target_class = 0
+        target_class = random.choice(class_list)
         k = -0.95
-        starting_points = 5
-        learning_rate = 0.02
+        starting_points = 1
+        positions = np.random.rand(starting_points,224,224,3)
+        learning_rate = 1000.0
+        true_image = np.expand_dims(image,axis=0)
         outputs= []
-        for entry in np.random.rand(starting_points,224,224,3):
-            print('it didnt crash on starting point calculation')
-            pertubation_delta = entry
-            image = image
+
+        #this section causes the gradient descent to be started from multiple points
+        outer_counter = 0
+        print(positions[0].shape)
+        for entry in positions:
+            print(entry.shape)
+            print('now entering gradient descent trial ' + str(outer_counter))
+            outer_counter += 1
+            pertubation_delta = np.expand_dims(entry, axis=0)
+            image = true_image
+            print(image.shape)
             pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(image, pertubation_delta)
-            scores = model(np.expand_dims(pertubed_image, axis=0))
+            print(pertubed_image.shape)
+            scores = model(pertubed_image)
             loss = np.linalg.norm(image - pertubed_image) + (learning_rate *max((max(np.delete(scores,target_class)) -scores[:1,target_class]),k))
-            print('it didnt crash on loss calculation')
-            counter = 0
-            print(str(np.argmax(scores)))
-            print(str(target_class))
-            while (not(np.argmax(scores) == target_class)) and (counter < maximal_loop):
+            inner_counter = 0
+            print('this is the most likely class' + str(np.argmax(scores)))
+            print('this is the target class' + str(target_class))
+            print('this is the true class' + str(classification))
+            print('default pertubation shape' + str(pertubed_image))
+
+            # this section calculates the derivative of the loss for the current image, and adds this as a pertubation, before checking
+            # if the result correctly missclassifies the image.
+            while ((np.argmax(scores) == classification)) and (inner_counter < maximal_loop):
+                print('now entering pertubation cycle ' + str(inner_counter))
+                #denormalize_and_save_image(np.squeeze(pertubed_image,axis=0),inner_counter,'pertubed')
+                inner_counter += 1
+                print(np.argmax(scores))
+                print(np.max(scores))
                 class_term_derivative = calculate_class_term_derivative_for_carlini_wagner_loss_function(pertubed_image,model,learning_rate,target_class,k)
-                print('it didnt crash on class term derivative calculation')
                 euclidean_term_derivative = calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image)
-                print('it didnt crash on the euclidean term derivative calculation')
-                pertubation_delta = euclidean_term_derivative + class_term_derivative
+                pertubation_delta = perform_arbitary_precision_addtion_of_numpy_arrays(euclidean_term_derivative, class_term_derivative)
+                print('this is the shape of the delta' + str(pertubation_delta.shape))
+                #denormalize_and_save_image(np.squeeze(pertubation_delta,axis=0),inner_counter,'pertubation')
                 image = pertubed_image
-                pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(pertubed_image, pertubation_delta)
+                print(image.shape)
+                pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(pertubed_image, -pertubation_delta)
+                print(pertubed_image.shape)
                 scores = model(pertubed_image)
-            outputs.append((pertubed_image,loss))
+                loss = np.linalg.norm(image - pertubed_image) + (learning_rate *max((max(np.delete(scores,target_class)) -scores[:1,target_class]),k))
+                print('this is the loss' + str(loss))
+            outputs.append((pertubed_image,loss,pertubation_delta))
 
 
-
-        print(outputs)
-
-
-        return np.zeros(image.shape)
+        #this section identifies which of the calculated pertubed images is best.
+        minimal_loss = 999999999999999
+        best_image = np.zeros((1,224,224,3))
+        best_pertubation = np.zeros((1,224,224,3))
+        for entry in outputs:
+            if entry[1] < minimal_loss:
+                minimal_loss = entry[1]
+                best_image = entry[0]
+                best_pertubation = entry[2]
+        return np.squeeze(best_image,axis=0), np.squeeze(best_pertubation,axis=0)
 
 
 
