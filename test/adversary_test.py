@@ -13,7 +13,7 @@ database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_fi
 # adding Folder_2 to the system path
 sys.path.insert(0, './src')
 
-from adversary import generate_pertubations, AdversarialAttacks, find_logit_derivative_value,find_nearest_class_boundary, calculate_cumulative_pertubation_for_deepfool, calculate_euclidean_term_derivative_for_carlini_wagner_loss_function
+from adversary import generate_pertubations, AdversarialAttacks, find_logit_derivative_value,find_nearest_class_boundary, calculate_cumulative_pertubation_for_deepfool, calculate_euclidean_term_derivative_for_carlini_wagner_loss_function, calculate_class_term_derivative_for_carlini_wagner_loss_function
 
 class adversary_tests(unittest.TestCase):
     # test that passing a different model name to the function causes the corresponding model to be returned
@@ -136,6 +136,22 @@ class adversary_tests(unittest.TestCase):
         image = np.ones((5))
         pertubed_image = np.full((5),2)
         npt.assert_array_almost_equal(calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image),[-0.447214, -0.447214, -0.447214, -0.447214, -0.447214],decimal=6)
+    
+    def test_calculate_class_term_derivative_for_carlini_wagner_loss_function(self):
+        initializer = tf.keras.initializers.RandomNormal(
+        mean=0.0, stddev=0.1, seed=42
+        )
+        image = np.ones((1,3))
+        model = tf.keras.Sequential([
+            tf.keras.layers.Dense(3, input_shape=(3,), activation='linear', kernel_initializer=initializer),
+            tf.keras.layers.Dense(3, activation='linear', kernel_initializer=initializer),
+            tf.keras.layers.Dense(3, activation='softmax', kernel_initializer=initializer)
+        ])
+        learning_rate = 10000.0
+        target_class = 1
+        k = -0.5
+        npt.assert_array_almost_equal(calculate_class_term_derivative_for_carlini_wagner_loss_function(image,model,learning_rate,target_class,k),[[16.97172 , -4.789984, -7.357985]],decimal=6)
+
 
 if __name__ == '__main__':
     unittest.main()
