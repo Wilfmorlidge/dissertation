@@ -12,7 +12,7 @@ print(tf.config.list_physical_devices('GPU'))
 #this indicates which attack is being used
 adversary_string = 'Carlini_Wagner'
 #this indicates which model is being used
-model_string = 'efficientnet'
+model_string = 'resnet'
 #this indicates which dataset is being used
 dataset_string = 'imagenette'
 
@@ -20,7 +20,7 @@ dataset_string = 'imagenette'
 database, info, class_list = load_dataset(dataset_string)
 
 # this resizes and pre-processes the database images for use by the appropriate model
-normalized_database = normalize_database(database,25,model_string, class_list)
+normalized_database = normalize_database(database,5,model_string, class_list)
 
 # this acquires the model
 model = initialize_model(model_string)

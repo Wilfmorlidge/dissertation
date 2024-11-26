@@ -66,6 +66,27 @@ def calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,p
         l2_norm = tf.norm(image - pertubed_image, ord='euclidean')
     return np.array(watcher.gradient(l2_norm,image))
 
+def optimal_image_calculator(outputs):
+        minimal_loss = 999999999999999
+        best_image = np.zeros((1,224,224,3))
+        best_pertubation = np.zeros((1,224,224,3))
+        for entry in outputs:
+            if entry[1] < minimal_loss:
+                minimal_loss = entry[1]
+                best_image = entry[0]
+                best_pertubation = entry[2]
+        return np.squeeze(best_image,axis=0), np.squeeze(best_pertubation,axis=0)
+
+def update_loss_function_for_carlini_wagner(image, pertubed_image, model, learning_rate, target_class, k):
+    class_term_derivative = calculate_class_term_derivative_for_carlini_wagner_loss_function(pertubed_image,model,learning_rate,target_class,k)
+    euclidean_term_derivative = calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image)
+    pertubation_delta = perform_arbitary_precision_addtion_of_numpy_arrays(euclidean_term_derivative, class_term_derivative)
+    image = pertubed_image
+    pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(pertubed_image, -pertubation_delta)
+    scores = model(pertubed_image)
+    loss = np.linalg.norm(image - pertubed_image) + (learning_rate *max((max(np.delete(scores,target_class)) -scores[:1,target_class]),k))
+    print('this is the loss' + str(loss))
+    return image, pertubed_image, pertubation_delta, loss, scores
 
 class AdversarialAttacks:
     def DeepFool_iteration_step(self,image,classification,model, class_list, maximal_loop = 50):
@@ -133,27 +154,12 @@ class AdversarialAttacks:
             while ((np.argmax(scores) == classification)) and (inner_counter < maximal_loop):
                 print('now entering pertubation cycle ' + str(inner_counter))
                 inner_counter += 1
-                class_term_derivative = calculate_class_term_derivative_for_carlini_wagner_loss_function(pertubed_image,model,learning_rate,target_class,k)
-                euclidean_term_derivative = calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image)
-                pertubation_delta = perform_arbitary_precision_addtion_of_numpy_arrays(euclidean_term_derivative, class_term_derivative)
-                image = pertubed_image
-                pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(pertubed_image, -pertubation_delta)
-                scores = model(pertubed_image)
-                loss = np.linalg.norm(image - pertubed_image) + (learning_rate *max((max(np.delete(scores,target_class)) -scores[:1,target_class]),k))
-                print('this is the loss' + str(loss))
+                image, pertubed_image, pertubation_delta,loss,scores = update_loss_function_for_carlini_wagner(image, pertubed_image, model, learning_rate, target_class, k)
             outputs.append((pertubed_image,loss,pertubation_delta))
 
 
         #this section identifies which of the calculated pertubed images is best.
-        minimal_loss = 999999999999999
-        best_image = np.zeros((1,224,224,3))
-        best_pertubation = np.zeros((1,224,224,3))
-        for entry in outputs:
-            if entry[1] < minimal_loss:
-                minimal_loss = entry[1]
-                best_image = entry[0]
-                best_pertubation = entry[2]
-        return np.squeeze(best_image,axis=0), np.squeeze(best_pertubation,axis=0)
+        return optimal_image_calculator(outputs)
 
 
 
