@@ -158,7 +158,7 @@ class AdversarialAttacks:
             outputs.append((pertubed_image,loss,pertubation_delta))
 
 
-        #this section identifies which of the calculated pertubed images is best.
+        #this section identifies which of the calculated pertubed images produces the lowest loss.
         return optimal_image_calculator(outputs)
 
 
