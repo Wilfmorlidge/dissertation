@@ -13,7 +13,7 @@ database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_fi
 # adding Folder_2 to the system path
 sys.path.insert(0, './src')
 
-from adversary import generate_pertubations, AdversarialAttacks, find_logit_derivative_value,find_nearest_class_boundary, calculate_cumulative_pertubation_for_deepfool
+from adversary import generate_pertubations, AdversarialAttacks, find_logit_derivative_value,find_nearest_class_boundary, calculate_cumulative_pertubation_for_deepfool, calculate_euclidean_term_derivative_for_carlini_wagner_loss_function
 
 class adversary_tests(unittest.TestCase):
     # test that passing a different model name to the function causes the corresponding model to be returned
@@ -24,7 +24,7 @@ class adversary_tests(unittest.TestCase):
         include_top=True,
         weights="imagenet",
         classifier_activation="softmax"
-        ),'none')
+        ),'none',[0,217,482,491,497,566,569,571,574,701])
         npt.assert_array_equal(test_data['unpertubed_images'],np.ones((10,224,224,3)))
         npt.assert_array_equal(test_data['pertubed_images'],np.ones((10,224,224,3)))
         npt.assert_array_equal(test_data['pertubations'],np.zeros((10,224,224,3)))
@@ -38,7 +38,7 @@ class adversary_tests(unittest.TestCase):
         include_top=True,
         weights="imagenet",
         classifier_activation="softmax"
-        ),'DeepFool')
+        ),'DeepFool',[0,217,482,491,497,566,569,571,574,701])
         self.assertEqual(AdversarialAttacks.DeepFool_iteration_step.call_count,3)
         
     def test_logit_derivative_calculation(self):
@@ -131,6 +131,11 @@ class adversary_tests(unittest.TestCase):
         test_data2 = AdversarialAttacks.DeepFool_iteration_step(self,image,classification,model,class_list,maximal_loop=1000)
         npt.assert_array_almost_equal(test_data1[0], test_data2[0],decimal=1e-02)
         npt.assert_array_almost_equal(test_data2[1], [0,0,0],decimal=1e-50)
+
+    def test_calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(self):
+        image = np.ones((5))
+        pertubed_image = np.full((5),2)
+        npt.assert_array_almost_equal(calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image),[-0.447214, -0.447214, -0.447214, -0.447214, -0.447214],decimal=6)
 
 if __name__ == '__main__':
     unittest.main()

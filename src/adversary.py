@@ -1,10 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from decimal import Decimal
-from PIL import Image
 import random
-
-from window import denormalize_and_save_image
 
 
 def find_logit_derivative_value(image,logit,model):
@@ -104,51 +101,43 @@ class AdversarialAttacks:
 
     def Carlini_Wagner_iteration_step(self,image,classification,model, class_list, maximal_loop = 50):
         np.set_printoptions(precision=20)
-        target_class = random.choice(class_list)
-        k = -0.95
+        print(classification)
+        current_class_list = np.copy(class_list).tolist()
+        current_class_list.remove(classification)
+        print(class_list)
+        print(current_class_list)
+        target_class = random.choice(current_class_list)
+        k = -0.2
         starting_points = 1
-        positions = np.random.rand(starting_points,224,224,3)
-        learning_rate = 1000.0
+        positions = np.random.uniform(-1,1,(starting_points,224,224,3))
+        learning_rate = 10000.0
         true_image = np.expand_dims(image,axis=0)
+        outer_counter = 0
         outputs= []
+        print(target_class)
+        print(classification)
 
         #this section causes the gradient descent to be started from multiple points
-        outer_counter = 0
-        print(positions[0].shape)
         for entry in positions:
-            print(entry.shape)
             print('now entering gradient descent trial ' + str(outer_counter))
             outer_counter += 1
             pertubation_delta = np.expand_dims(entry, axis=0)
             image = true_image
-            print(image.shape)
             pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(image, pertubation_delta)
-            print(pertubed_image.shape)
             scores = model(pertubed_image)
             loss = np.linalg.norm(image - pertubed_image) + (learning_rate *max((max(np.delete(scores,target_class)) -scores[:1,target_class]),k))
             inner_counter = 0
-            print('this is the most likely class' + str(np.argmax(scores)))
-            print('this is the target class' + str(target_class))
-            print('this is the true class' + str(classification))
-            print('default pertubation shape' + str(pertubed_image))
 
             # this section calculates the derivative of the loss for the current image, and adds this as a pertubation, before checking
             # if the result correctly missclassifies the image.
             while ((np.argmax(scores) == classification)) and (inner_counter < maximal_loop):
                 print('now entering pertubation cycle ' + str(inner_counter))
-                #denormalize_and_save_image(np.squeeze(pertubed_image,axis=0),inner_counter,'pertubed')
                 inner_counter += 1
-                print(np.argmax(scores))
-                print(np.max(scores))
                 class_term_derivative = calculate_class_term_derivative_for_carlini_wagner_loss_function(pertubed_image,model,learning_rate,target_class,k)
                 euclidean_term_derivative = calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image)
                 pertubation_delta = perform_arbitary_precision_addtion_of_numpy_arrays(euclidean_term_derivative, class_term_derivative)
-                print('this is the shape of the delta' + str(pertubation_delta.shape))
-                #denormalize_and_save_image(np.squeeze(pertubation_delta,axis=0),inner_counter,'pertubation')
                 image = pertubed_image
-                print(image.shape)
                 pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(pertubed_image, -pertubation_delta)
-                print(pertubed_image.shape)
                 scores = model(pertubed_image)
                 loss = np.linalg.norm(image - pertubed_image) + (learning_rate *max((max(np.delete(scores,target_class)) -scores[:1,target_class]),k))
                 print('this is the loss' + str(loss))

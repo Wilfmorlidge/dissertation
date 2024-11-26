@@ -23,7 +23,7 @@ class BasicNetworkTests(unittest.TestCase):
 
     #test that the image pre-processing function performs as expected
     def test_normalize_database(self):
-        results = normalize_database(database,10,'resnet')
+        results = normalize_database(database,10,'resnet',[0,217,482,491,497,566,569,571,574,701])
         self.assertIsInstance(results, dict)
         self.assertIn('images',results)
         self.assertEqual(np.array(results['images']).shape, (10, 224, 224, 3))

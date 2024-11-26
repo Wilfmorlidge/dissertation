@@ -12,7 +12,7 @@ print(tf.config.list_physical_devices('GPU'))
 #this indicates which attack is being used
 adversary_string = 'Carlini_Wagner'
 #this indicates which model is being used
-model_string = 'resnet'
+model_string = 'efficientnet'
 #this indicates which dataset is being used
 dataset_string = 'imagenette'
 
