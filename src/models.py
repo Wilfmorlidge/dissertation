@@ -24,5 +24,9 @@ def load_dataset(dataset_string):
         return database, info, class_list
     if (dataset_string == 'imagewoof'):
         database, info = tfds.load('imagewang/320px', split='validation', shuffle_files=True, with_info=True)
-        class_list = [0,1,182,229,155,162,258,273,8,9,10,11,12,13,14,193,207,167,159,19]
+        class_list = [566,569,2,3,4,5,6,7,8,9,10,701,12,491,0,15,16,17,18,482]
+        return database, info, class_list
+    if (dataset_string == 'imagewang'):
+        database, info = tfds.load('imagewang/320px', split='train', shuffle_files=True, with_info=True)
+        class_list = [566,569,2,3,4,5,6,7,8,9,10,701,12,491,0,15,16,17,18,482]
         return database, info, class_list

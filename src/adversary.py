@@ -125,7 +125,7 @@ class AdversarialAttacks:
 
         return image, cumulative_pertubation
 
-    def Carlini_Wagner_iteration_step(self,image,classification,model, class_list, maximal_loop = 50,temperature = 0):
+    def Carlini_Wagner_iteration_step(self,image,classification,model, class_list, maximal_loop = 50,temperature = 1):
         np.set_printoptions(precision=20)
         current_class_list = np.copy(class_list).tolist()
         current_class_list.remove(classification)
