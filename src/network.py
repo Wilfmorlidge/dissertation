@@ -11,7 +11,7 @@ def resize_image(image):
     return image
 
 def re_label_image(label,class_list):
-    mapping = {i: class_list[i] for i in range(10)}
+    mapping = {i: class_list[i] for i in range(0,len(class_list))}
     return mapping.get(label,label)
 
 def normalize_database(unnormalised_database,length,model_string,class_list, info='info not provided'):
@@ -26,8 +26,6 @@ def normalize_database(unnormalised_database,length,model_string,class_list, inf
         module = __import__(pre_processing_method_name, fromlist=['preprocess_input'])
         # Get the preprocess_input function
         pre_processing_method = getattr(module, 'preprocess_input')
-        print(entry['label'])
-        denormalize_and_save_image(entry['image'],counter,'unpertubed')
         counter += 1
         print('currently processing image #' + str(counter))
         normalized_database['images'].append(np.array(pre_processing_method(resize_image(entry['image']))))

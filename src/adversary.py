@@ -59,14 +59,11 @@ def calculate_class_term_derivative_for_carlini_wagner_loss_function(image,model
     
 
 def calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image):
-    print(image)
-    print(pertubed_image)
     image = tf.Variable(tf.cast(image, tf.float64))
     pertubed_image = tf.constant(tf.cast(pertubed_image, tf.float64))
     with tf.GradientTape() as watcher:
         watcher.watch(image)
         l2_norm = tf.norm(image - pertubed_image, ord='euclidean')
-    print(l2_norm)
     return np.array(watcher.gradient(l2_norm,image))
 
 def optimal_image_calculator(outputs):
@@ -82,9 +79,7 @@ def optimal_image_calculator(outputs):
 
 def update_loss_function_for_carlini_wagner(image, pertubed_image, model, learning_rate, target_class, k):
     class_term_derivative = calculate_class_term_derivative_for_carlini_wagner_loss_function(pertubed_image,model,learning_rate,target_class,k)
-    print(class_term_derivative)
     euclidean_term_derivative = calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image)
-    print(euclidean_term_derivative)
     pertubation_delta = perform_arbitary_precision_addtion_of_numpy_arrays(euclidean_term_derivative, class_term_derivative)
     image = pertubed_image
     pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(pertubed_image, -pertubation_delta)
@@ -94,19 +89,19 @@ def update_loss_function_for_carlini_wagner(image, pertubed_image, model, learni
     return image, pertubed_image, pertubation_delta, loss, scores
 
 class AdversarialAttacks:
-    def DeepFool_iteration_step(self,image,classification,model, class_list, maximal_loop = 50):
+    def DeepFool_iteration_step(self,image,classification,model, class_list, maximal_loop = 50, overshoot_scalar = 0.2, maximum_pertubation_distance = 1000.0):
 
         #in this section necessary variables are defined
         np.set_printoptions(precision=20)
         image = image.astype(np.float64)
+        true_image = image
         scores = model(np.expand_dims(image, axis=0))
         loop_counter = 0
         cumulative_pertubation = np.zeros((image.shape))
-        overshoot_scalar = 0.2
         print('this is the overshoot scalar' + str(overshoot_scalar))
 
 
-        while (np.argmax(scores) == classification) and (loop_counter < maximal_loop):
+        while ((loop_counter < maximal_loop) and (np.argmax(scores) == classification)):
             loop_counter += 1
             print('now entering pertubation cycle ' + str(loop_counter))
             logit_derivative_for_true_class = find_logit_derivative_value(image,classification,model)
@@ -123,17 +118,18 @@ class AdversarialAttacks:
             cumulative_pertubation,image = calculate_cumulative_pertubation_for_deepfool(optimizer_values,image,cumulative_pertubation,logit_derivative_for_true_class,overshoot_scalar)
             scores = model(np.expand_dims(image, axis=0))
 
-        return image, cumulative_pertubation
+        if (np.linalg.norm(image-true_image) < maximum_pertubation_distance):
+            return image, cumulative_pertubation
+        else:
+            return true_image, np.zeros((image.shape))
 
-    def Carlini_Wagner_iteration_step(self,image,classification,model, class_list, maximal_loop = 50,temperature = 1):
+    def Carlini_Wagner_iteration_step(self,image,classification,model, class_list, maximal_loop = 50,temperature = 1, k = -0.2, learning_rate = 10000.0,maximum_pertubation_distance = 1000.0):
         np.set_printoptions(precision=20)
         current_class_list = np.copy(class_list).tolist()
         current_class_list.remove(classification)
         target_class = random.choice(current_class_list)
-        k = -0.2
         starting_points = 1
         positions = np.random.uniform(-temperature,temperature,(starting_points, *image.shape))
-        learning_rate = 10000.0
         true_image = np.expand_dims(image,axis=0)
         outer_counter = 0
         outputs= []
@@ -147,7 +143,6 @@ class AdversarialAttacks:
             pertubation_delta = np.expand_dims(entry, axis=0)
             image = true_image
             pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(image, pertubation_delta)
-            print('this is the pertubed_image' + str(pertubed_image))
             scores = model(pertubed_image)
             print(np.argmax(scores))
             loss = np.linalg.norm(image - pertubed_image) + (learning_rate *max((max(np.delete(scores,target_class)) -scores[:1,target_class]),k))
@@ -163,7 +158,11 @@ class AdversarialAttacks:
 
 
         #this section identifies which of the calculated pertubed images produces the lowest loss.
-        return optimal_image_calculator(outputs)
+        image, pertubation_delta = optimal_image_calculator(outputs)
+        if (np.linalg.norm(image-true_image) < maximum_pertubation_distance):
+            return image, pertubation_delta
+        else:
+            return true_image, np.zeros((image.shape))
 
 
 

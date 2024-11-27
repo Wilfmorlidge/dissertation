@@ -15,6 +15,27 @@ def initialize_model(model_string):
             input_tensor=None,
             classifier_activation='softmax',
         )
+    elif (model_string == 'mobilenet'):
+        return tf.keras.applications.MobileNetV2(
+            input_shape=None,
+            alpha=1.0,
+            include_top=True,
+            weights='imagenet',
+            input_tensor=None,
+            pooling=None,
+            classes=1000,
+            classifier_activation='softmax'
+        )
+    elif (model_string == 'vgg19'):
+        return tf.keras.applications.VGG19(
+            include_top=True,
+            weights='imagenet',
+            input_tensor=None,
+            input_shape=None,
+            pooling=None,
+            classes=1000,
+            classifier_activation='softmax'
+        )
     
 
 def load_dataset(dataset_string):
@@ -24,9 +45,14 @@ def load_dataset(dataset_string):
         return database, info, class_list
     if (dataset_string == 'imagewoof'):
         database, info = tfds.load('imagewang/320px', split='validation', shuffle_files=True, with_info=True)
-        class_list = [566,569,2,3,4,5,6,7,8,9,10,701,12,491,0,15,16,17,18,482]
+        class_list = [566,569,155,229,159,207,273,574,9,571,701,497,491,0,182,16,193,18,482]
         return database, info, class_list
     if (dataset_string == 'imagewang'):
         database, info = tfds.load('imagewang/320px', split='train', shuffle_files=True, with_info=True)
-        class_list = [566,569,2,3,4,5,6,7,8,9,10,701,12,491,0,15,16,17,18,482]
+        class_list = [566,569,155,229,159,207,273,574,9,571,701,497,491,0,182,16,193,18,482]
         return database, info, class_list
+    if (dataset_string == 'imagenet'):
+        database, info = tfds.load('imagenet_r', split='test', shuffle_files=True, with_info=True)
+        class_list = [range(0,999)]
+        return database, info, class_list
+
