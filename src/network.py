@@ -31,7 +31,6 @@ def normalize_database(unnormalised_database,length,model_string,class_list, inf
         normalized_database['images'].append(np.array(pre_processing_method(resize_image(entry['image']))))
         fixed_label = re_label_image(entry['label'], class_list)
         normalized_database['classifications'].append(fixed_label)
-    print(normalized_database['classifications'])
     return normalized_database
 
 

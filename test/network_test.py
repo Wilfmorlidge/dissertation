@@ -6,7 +6,7 @@ import tensorflow as tf
 import sys
 import numpy.testing as npt
 import tensorflow_datasets as tfds
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_files=True, with_info=True)
 
