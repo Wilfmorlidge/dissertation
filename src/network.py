@@ -1,7 +1,6 @@
 import tensorflow as tf
 import numpy as np
 import tensorflow_datasets as tfds
-from models import initialize_model
 from window import denormalize_and_save_image
 from PIL import Image
 
@@ -42,26 +41,35 @@ def calculate_output_data(database,model):
     confidences = []
     classes = []
     accuracy = 0
+    misplaceed_confidence_sum = 0
+    pertubation_sum = 0
     for counter in range(0,len(scores)):
         denormalize_and_save_image(database['unpertubed_images'][counter],counter,'unpertubed')
         denormalize_and_save_image(database['pertubations'][counter],counter,'pertubation')
         denormalize_and_save_image(database['pertubed_images'][counter],counter,'pertubed')
         confidences.append(np.max(scores[counter]))
         this_class = np.argmax(scores[counter])
+        pertubation_sum += np.linalg.norm(database['pertubed_images'][counter]-database['unpertubed_images'][counter])
         if this_class == database['classifications'][counter]:
             accuracy += 1
+        else:
+            misplaceed_confidence_sum = np.max(scores[counter])
         classes.append(this_class)
+
+
     accuracy = accuracy / len(scores)
+    GMQ = misplaceed_confidence_sum / len(scores)
+    mean_pertubation = pertubation_sum / len(scores)
     dictionary = {'confidences': np.array(confidences),
                   'classes': np.array(classes),
-                  'accuracy': accuracy
+                  'accuracy': accuracy,
+                  'GMQ': GMQ,
+                  'mean_pertubation': mean_pertubation
+
     }
     return dictionary
 
 
 
-
-
-# implement an adversarial flag, so that where true the normalized images are passed to adversary.py and pertubed before being used
 
 

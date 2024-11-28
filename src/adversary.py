@@ -67,6 +67,7 @@ def calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,p
     return np.array(watcher.gradient(l2_norm,image))
 
 def optimal_image_calculator(outputs):
+        # where starting points for Carlini Wagner is not 0, this calculates the optimal outcome from the trials
         minimal_loss = 999999999999999
         best_image = np.zeros((1,224,224,3))
         best_pertubation = np.zeros((1,224,224,3))
@@ -78,6 +79,7 @@ def optimal_image_calculator(outputs):
         return np.squeeze(best_image,axis=0), np.squeeze(best_pertubation,axis=0)
 
 def update_loss_function_for_carlini_wagner(image, pertubed_image, model, learning_rate, target_class, k):
+    #this performs a gradient descent step by calculating the derivative of the loss for the current pertubation, and then subtracting it from the image.
     class_term_derivative = calculate_class_term_derivative_for_carlini_wagner_loss_function(pertubed_image,model,learning_rate,target_class,k)
     euclidean_term_derivative = calculate_euclidean_term_derivative_for_carlini_wagner_loss_function(image,pertubed_image)
     pertubation_delta = perform_arbitary_precision_addtion_of_numpy_arrays(euclidean_term_derivative, class_term_derivative)
