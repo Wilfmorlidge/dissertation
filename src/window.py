@@ -26,7 +26,9 @@ def define_window(window):
 def front_end_main():
     root = tk.Tk()
     define_window(root)
+    top_frame = tk.Frame(root, bg="lightblue", width=100, height=200)
+    top_frame.pack(fill = tk.X)
     root.mainloop()
 
-
-test = front_end_main()
+if __name__ == "__main__":
+    front_end_main()
