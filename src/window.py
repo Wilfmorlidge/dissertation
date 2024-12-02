@@ -8,21 +8,51 @@ def denormalize_and_save_image(image,ident,type):
 
 from tkinter import ttk
 
-def define_window(window):
+def define_window(root):
     #this component defines the aesthetic attributes of the window and the application background
-    window.title('adversarial trial runner')
-    window.geometry("1500x750")
-    window.resizable(False, False)
-    window.attributes('-topmost', 1)
-    window.configure(bg='dimgray')
-    window.update_idletasks()
-    width = window.winfo_width()
-    height = window.winfo_height()
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
+    root.title('adversarial trial runner')
+    root.geometry("1500x750")
+    root.resizable(False, False)
+    root.attributes('-topmost', 1)
+    root.configure(bg='dimgray')
+    root.update_idletasks()
+    width = root.winfo_width()
+    height = root.winfo_height()
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
     x = (screen_width - width) // 2
     y = (screen_height - height) // 2
-    window.geometry(f"{width}x{height}+{x}+{y}")
+    root.geometry(f"{width}x{height}+{x}+{y}")
+
+
+
+
+def scroll_list(root):
+    display_width = 100
+    canvas = tk.Canvas(root, height = 100, width = (display_width-4))
+    list_frame = tk.Frame(canvas, bg="dimgray")
+    list_frame.bind(
+    "<Configure>",
+    lambda e: canvas.configure(
+        scrollregion=canvas.bbox("all")
+    )
+    )
+    canvas.update_idletasks()
+    canvas.create_window((((display_width/2)),0) , window=list_frame, anchor='center')
+    scrollbar = ttk.Scrollbar(root, orient='vertical', command=canvas.yview)
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+
+    left_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black', height=300,width=display_width)
+    left_frame.pack(side = 'top',fill='both', expand=(True))
+    middle_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='green', height=300)
+    middle_frame.pack(side = 'top',fill='both', expand=(True))
+    right_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black', height=300)
+    right_frame.pack(side = 'top',fill='both', expand=(True))
+
+
+    canvas.pack( fill=tk.Y, anchor='center')
+    scrollbar.pack( fill=tk.Y, anchor='center')
 
 def front_end_main():
     root = tk.Tk()
@@ -37,6 +67,7 @@ def front_end_main():
     middle_frame.pack(side = 'left',fill='both', expand=(True))
     right_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
     right_frame.pack(side = 'left',fill='both', expand=(True))
+    scroll_list(left_frame)
     root.mainloop()
 
 if __name__ == "__main__":
