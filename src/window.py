@@ -29,7 +29,8 @@ def define_window(root):
 
 def scroll_list(root):
     display_width = 100
-    canvas = tk.Canvas(root, height = 100, width = (display_width-4))
+    object_container = tk.Frame(root, width = display_width, bg='green', highlightbackground='red')
+    canvas = tk.Canvas(object_container, width = (display_width-4),bg='dimgray')
     list_frame = tk.Frame(canvas, bg="dimgray")
     list_frame.bind(
     "<Configure>",
@@ -39,20 +40,23 @@ def scroll_list(root):
     )
     canvas.update_idletasks()
     canvas.create_window((((display_width/2)),0) , window=list_frame, anchor='center')
-    scrollbar = ttk.Scrollbar(root, orient='vertical', command=canvas.yview)
+    scrollbar = ttk.Scrollbar(object_container, orient='vertical', command=canvas.yview)
     canvas.configure(yscrollcommand=scrollbar.set)
 
 
-    left_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black', height=300,width=display_width)
+    left_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black',width=display_width)
     left_frame.pack(side = 'top',fill='both', expand=(True))
-    middle_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='green', height=300)
+    middle_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='green')
     middle_frame.pack(side = 'top',fill='both', expand=(True))
-    right_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black', height=300)
+    right_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black')
     right_frame.pack(side = 'top',fill='both', expand=(True))
 
 
-    canvas.pack( fill=tk.Y, anchor='center')
-    scrollbar.pack( fill=tk.Y, anchor='center')
+    object_container.pack(side='left',expand=True)
+    canvas.pack(side = 'left', fill='y')
+    scrollbar.pack(side = 'left', fill='y')
+
+    object_container.update_idletasks()
 
 def front_end_main():
     root = tk.Tk()
