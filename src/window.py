@@ -10,6 +10,7 @@ from tkinter import ttk
 
 def define_window(window):
     #this component defines the aesthetic attributes of the window and the application background
+    window.title('adversarial trial runner')
     window.geometry("1500x750")
     window.resizable(False, False)
     window.attributes('-topmost', 1)
@@ -26,8 +27,16 @@ def define_window(window):
 def front_end_main():
     root = tk.Tk()
     define_window(root)
-    top_frame = tk.Frame(root, bg="lightblue", width=100, height=200)
-    top_frame.pack(fill = tk.X)
+    top_frame = tk.Frame(root, bg="dimgray", highlightthickness=2, highlightbackground='black', height=200)
+    top_frame.pack(side = 'top',fill = tk.X)
+    bottom_frame = tk.Frame(root, bg="dimgray", height=200)
+    bottom_frame.pack(side = 'top',fill='both', expand=(True))
+    left_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
+    left_frame.pack(side = 'left',fill='both', expand=(True))
+    middle_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
+    middle_frame.pack(side = 'left',fill='both', expand=(True))
+    right_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
+    right_frame.pack(side = 'left',fill='both', expand=(True))
     root.mainloop()
 
 if __name__ == "__main__":
