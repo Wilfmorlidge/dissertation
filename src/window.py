@@ -29,9 +29,10 @@ def define_window(root):
 
 def scroll_list(root):
     display_width = 100
-    object_container = tk.Frame(root, width = display_width, bg='green', highlightbackground='red')
-    canvas = tk.Canvas(object_container, width = (display_width-4),bg='dimgray')
-    list_frame = tk.Frame(canvas, bg="dimgray")
+    display_height = 100
+    object_container = tk.Frame(root,height = 50, width = display_width, bg='dimgray', highlightbackground='dimgray')
+    canvas = tk.Canvas(object_container, width = (display_width-4), height = display_height, bg='dimgray', highlightbackground='dimgray')
+    list_frame = tk.Frame(canvas, bg="dimgray", highlightbackground='dimgray')
     list_frame.bind(
     "<Configure>",
     lambda e: canvas.configure(
@@ -44,16 +45,25 @@ def scroll_list(root):
     canvas.configure(yscrollcommand=scrollbar.set)
 
 
-    left_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black',width=display_width)
+    left_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black',width=display_width, height = 1)
     left_frame.pack(side = 'top',fill='both', expand=(True))
-    middle_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='green')
+    middle_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='green', height = 1)
     middle_frame.pack(side = 'top',fill='both', expand=(True))
-    right_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black')
+    right_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black', height = 1)
     right_frame.pack(side = 'top',fill='both', expand=(True))
+
+    root.update_idletasks()
+    expection_frame = tk.Frame(list_frame,height=1, highlightbackground='dimgray')
+    print('this is the height of the frame' + str(list_frame.winfo_height()))
+    if list_frame.winfo_height() < display_height:
+        print('life is not purposeful')
+        expection_frame.pack(side = 'top',fill='both', expand=(True), pady=(0,(display_height-list_frame.winfo_height())))
+    else:
+        expection_frame.pack(side = 'top',fill='both', expand=(True))
 
 
     object_container.pack(side='left',expand=True)
-    canvas.pack(side = 'left', fill='y')
+    canvas.pack(side = 'left')
     scrollbar.pack(side = 'left', fill='y')
 
     object_container.update_idletasks()
