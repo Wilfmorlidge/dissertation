@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import tensorflow_datasets as tfds
 from network import normalize_database,calculate_output_data
-from models import initialize_model, load_dataset
+from definitions import initialize_model, load_dataset
 from adversary import generate_pertubations
 
 
@@ -17,8 +17,6 @@ model_string = 'resnet'
 dataset_string = 'imagenette'
 #this indicates how many images are used in a trial
 trial_length = 25
-#this indicates how many trials are undertaken
-trials = 5
 
 #this loads the database
 database, info, class_list = load_dataset(dataset_string)
@@ -33,6 +31,6 @@ model = initialize_model(model_string)
 final_database = generate_pertubations(normalized_database,model,adversary_string,class_list)
 
 # this tests the pertubed data against the network
-predictions = calculate_output_data(final_database,model,trials)
+predictions = calculate_output_data(final_database,model)
 
 print(predictions)

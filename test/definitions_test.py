@@ -10,7 +10,7 @@ import tensorflow_datasets as tfds
 # adding Folder_2 to the system path
 sys.path.insert(0, './src')
 
-from models import initialize_model
+from definitions import initialize_model
 
 class BasicModelSelectionTests(unittest.TestCase):
     # test that passing a different model name to the function causes the corresponding model to be returned

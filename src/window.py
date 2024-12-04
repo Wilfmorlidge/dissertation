@@ -24,7 +24,7 @@ def define_window(root):
     y = (screen_height - height) // 2
     root.geometry(f"{width}x{height}+{x}+{y}")
 
-def scroll_list_entries(root,display_width):
+def scroll_list_entries(root,display_width, type = 'attacks'):
     # based on passed though parameter we determine the type of content and how long the list is.
     # iterate though a for loop where for enteries in the content list we add a button with whatever
     # default styling is appropriate then call a function to create a appropriate entry content object within the button widget
@@ -43,8 +43,6 @@ def scroll_list_entries(root,display_width):
             Button.config(state=tk.DISABLED)
         Button.pack(side = 'top',fill='x', expand=(True))
     root.update_idletasks()
-    print('this is the height of the root' + str(root.winfo_height()))
-    print('this is the width of the root' + str(root.winfo_width()))
 
 
 def scroll_list(root,display_width = 100, display_height = 100):
@@ -63,20 +61,11 @@ def scroll_list(root,display_width = 100, display_height = 100):
     canvas.configure(yscrollcommand=scrollbar.set)
 
 
-    #left_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black',width=display_width, height = 50)
-    #left_frame.pack(side = 'top',fill='both', expand=(True))
-    #middle_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='green', height = 1)
-    #middle_frame.pack(side = 'top',fill='both', expand=(True))
-    #right_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black', height = 1)
-    #right_frame.pack(side = 'top',fill='both', expand=(True))
-
     scroll_list_entries(list_frame,display_width)
 
     root.update_idletasks()
     expection_frame = tk.Frame(list_frame,height=1, highlightbackground='dimgray', bg='dimgray')
-    print('this is the height of the frame' + str(list_frame.winfo_height()))
     if list_frame.winfo_height() < display_height:
-        print('life is not purposeful')
         expection_frame.pack(side = 'top',fill='both', expand=(True), pady=(0,(display_height-list_frame.winfo_height())))
     else:
         expection_frame.pack(side = 'top',fill='both', expand=(True))

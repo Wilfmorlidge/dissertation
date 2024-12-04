@@ -1,5 +1,48 @@
 import tensorflow as tf
 import tensorflow_datasets as tfds
+import sys
+
+sys.path.insert(0, './attacks')
+
+from DeepFool import DeepFool_iteration_step
+
+from Carlini_Wagner import Carlini_Wagner_iteration_step
+
+dictionary = {'model_dictionary':{ 
+    'resnet': (tf.keras.applications.ResNet50(
+        include_top=True,
+        weights="imagenet",
+        classifier_activation="softmax"
+    )),
+    'efficientnet': (tf.keras.applications.EfficientNetB0(
+            include_top=True,
+            weights='imagenet',
+            input_tensor=None,
+            classifier_activation='softmax',
+    )),
+    'mobilenet': (tf.keras.applications.MobileNetV2(
+            input_shape=None,
+            alpha=1.0,
+            include_top=True,
+            weights='imagenet',
+            input_tensor=None,
+            pooling=None,
+            classes=1000,
+            classifier_activation='softmax'
+    )),
+    'vgg19': (tf.keras.applications.VGG19(
+            include_top=True,
+            weights='imagenet',
+            input_tensor=None,
+            input_shape=None,
+            pooling=None,
+            classes=1000,
+            classifier_activation='softmax'
+        ))
+    },'attack_dictionary' : {
+    'DeepFool' : DeepFool_iteration_step,
+    'Carlini_Wagner' : Carlini_Wagner_iteration_step 
+    },'image_trio_dictionary' : {}, 'graph_dictionary': {}}
 
 def initialize_model(model_string):
     if (model_string == 'resnet'):
