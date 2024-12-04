@@ -53,7 +53,7 @@ def scroll_list(root):
     right_frame.pack(side = 'top',fill='both', expand=(True))
 
     root.update_idletasks()
-    expection_frame = tk.Frame(list_frame,height=1, highlightbackground='dimgray')
+    expection_frame = tk.Frame(list_frame,height=1, highlightbackground='dimgray', bg='dimgray')
     print('this is the height of the frame' + str(list_frame.winfo_height()))
     if list_frame.winfo_height() < display_height:
         print('life is not purposeful')
