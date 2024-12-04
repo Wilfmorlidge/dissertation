@@ -24,12 +24,30 @@ def define_window(root):
     y = (screen_height - height) // 2
     root.geometry(f"{width}x{height}+{x}+{y}")
 
+def scroll_list_entries(root,display_width):
+    # based on passed though parameter we determine the type of content and how long the list is.
+    # iterate though a for loop where for enteries in the content list we add a button with whatever
+    # default styling is appropriate then call a function to create a appropriate entry content object within the button widget
+    # we will also need to create a flag for whether the button is clickable or just a container
+    length = 5
+    height = 2
+    interactive= True
+
+    def button_event():
+        print('the button event triggered')
+        return True
+
+    for counter in range(0,length):
+        Button = tk.Button(root,text = counter,command=button_event, height = height,width=display_width)
+        if interactive == False:
+            Button.config(state=tk.DISABLED)
+        Button.pack(side = 'top',fill='x', expand=(True))
+    root.update_idletasks()
+    print('this is the height of the root' + str(root.winfo_height()))
+    print('this is the width of the root' + str(root.winfo_width()))
 
 
-
-def scroll_list(root):
-    display_width = 100
-    display_height = 100
+def scroll_list(root,display_width = 100, display_height = 100):
     object_container = tk.Frame(root,height = 50, width = display_width, bg='dimgray', highlightbackground='dimgray')
     canvas = tk.Canvas(object_container, width = (display_width-4), height = display_height, bg='dimgray', highlightbackground='dimgray')
     list_frame = tk.Frame(canvas, bg="dimgray", highlightbackground='dimgray')
@@ -45,12 +63,14 @@ def scroll_list(root):
     canvas.configure(yscrollcommand=scrollbar.set)
 
 
-    left_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black',width=display_width, height = 1)
-    left_frame.pack(side = 'top',fill='both', expand=(True))
-    middle_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='green', height = 1)
-    middle_frame.pack(side = 'top',fill='both', expand=(True))
-    right_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black', height = 1)
-    right_frame.pack(side = 'top',fill='both', expand=(True))
+    #left_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black',width=display_width, height = 50)
+    #left_frame.pack(side = 'top',fill='both', expand=(True))
+    #middle_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='green', height = 1)
+    #middle_frame.pack(side = 'top',fill='both', expand=(True))
+    #right_frame = tk.Frame(list_frame, bg="dimgray", highlightthickness=1, highlightbackground='black', height = 1)
+    #right_frame.pack(side = 'top',fill='both', expand=(True))
+
+    scroll_list_entries(list_frame,display_width)
 
     root.update_idletasks()
     expection_frame = tk.Frame(list_frame,height=1, highlightbackground='dimgray', bg='dimgray')
@@ -65,8 +85,8 @@ def scroll_list(root):
     object_container.pack(side='left',expand=True)
     canvas.pack(side = 'left')
     scrollbar.pack(side = 'left', fill='y')
-
     object_container.update_idletasks()
+    canvas.yview_moveto(0)
 
 def front_end_main():
     root = tk.Tk()
