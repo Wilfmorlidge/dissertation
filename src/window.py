@@ -1,6 +1,8 @@
 import tkinter as tk
 from PIL import Image
 import numpy as np
+import sys
+from definitions import attack_dictionary,model_dictionary
 
 def denormalize_and_save_image(image,ident,type):
     display_2 = Image.fromarray(((image - image.min()) / (image.max() - image.min()) * 255).astype(np.uint8))
@@ -8,7 +10,7 @@ def denormalize_and_save_image(image,ident,type):
 
 from tkinter import ttk
 
-def define_window(root):
+def window(root):
     #this component defines the aesthetic attributes of the window and the application background
     root.title('adversarial trial runner')
     root.geometry("1500x750")
@@ -24,28 +26,31 @@ def define_window(root):
     y = (screen_height - height) // 2
     root.geometry(f"{width}x{height}+{x}+{y}")
 
-def scroll_list_entries(root,display_width, type = 'attacks'):
-    # based on passed though parameter we determine the type of content and how long the list is.
-    # iterate though a for loop where for enteries in the content list we add a button with whatever
-    # default styling is appropriate then call a function to create a appropriate entry content object within the button widget
-    # we will also need to create a flag for whether the button is clickable or just a container
-    length = 5
-    height = 2
+def single_input_scroll_list_entries(root,display_width,entry_height,dictionary, variable):
     interactive= True
 
-    def button_event():
+    def button_event(variable,key,value):
         print('the button event triggered')
+        if variable[0] != key:
+            variable[0] = key
+            variable.append(value)
+        else:
+            variable[:] = [None]
+
         return True
 
-    for counter in range(0,length):
-        Button = tk.Button(root,text = counter,command=button_event, height = height,width=display_width)
+    for (key, value) in dictionary.items():
+        print(dictionary.items())
+        print(key)
+        print(value)
+        Button = tk.Button(root,text = key,command= lambda k = key, v = value: button_event(variable,k,v), height = entry_height,width=display_width)
         if interactive == False:
             Button.config(state=tk.DISABLED)
         Button.pack(side = 'top',fill='x', expand=(True))
     root.update_idletasks()
 
 
-def scroll_list(root,display_width = 100, display_height = 100):
+def scroll_list(root,display_width, display_height ,entry_height, dictionary, variable, multi_input):
     object_container = tk.Frame(root,height = 50, width = display_width, bg='dimgray', highlightbackground='dimgray')
     canvas = tk.Canvas(object_container, width = (display_width-4), height = display_height, bg='dimgray', highlightbackground='dimgray')
     list_frame = tk.Frame(canvas, bg="dimgray", highlightbackground='dimgray')
@@ -61,7 +66,7 @@ def scroll_list(root,display_width = 100, display_height = 100):
     canvas.configure(yscrollcommand=scrollbar.set)
 
 
-    scroll_list_entries(list_frame,display_width)
+    single_input_scroll_list_entries(list_frame,display_width,entry_height, dictionary, variable)
 
     root.update_idletasks()
     expection_frame = tk.Frame(list_frame,height=1, highlightbackground='dimgray', bg='dimgray')
@@ -77,21 +82,57 @@ def scroll_list(root,display_width = 100, display_height = 100):
     object_container.update_idletasks()
     canvas.yview_moveto(0)
 
-def front_end_main():
+def landing_page():
+    selected_attack = [None]
+    selected_model = [None]
+    iteration_size = 5
+    iteration_number = 1
+    hyperparameter_settings = [None]
+
+    def show_values(selected_attack,selected_model):
+        print(selected_attack)
+        print(selected_model)
+
+
     root = tk.Tk()
-    define_window(root)
+
+    # this section defines the root and the background frame
+    window(root)
     top_frame = tk.Frame(root, bg="dimgray", highlightthickness=2, highlightbackground='black', height=200)
     top_frame.pack(side = 'top',fill = tk.X)
     bottom_frame = tk.Frame(root, bg="dimgray", height=200)
     bottom_frame.pack(side = 'top',fill='both', expand=(True))
+
+    # this section defines the bottom left frame and the attack list
     left_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
+    scroll_list(left_frame,display_width=200,display_height=300,entry_height=10, dictionary = attack_dictionary, variable = selected_attack, multi_input = False)
     left_frame.pack(side = 'left',fill='both', expand=(True))
+
+    # this section defines the bottom middle frame and the model list
     middle_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
+    scroll_list(middle_frame,display_width=100,display_height=200,entry_height=5, dictionary =  model_dictionary, variable = selected_model, multi_input = False)
     middle_frame.pack(side = 'left',fill='both', expand=(True))
+
+
+    # this section defines the bottom right frame and the parameter setting form
     right_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
+    iteration_size_scale = tk.Scale(right_frame,orient='horizontal',from_=5,to=100,variable=iteration_size)
+    iteration_number_scale = tk.Scale(right_frame,orient='horizontal',from_=1,to=10,variable=iteration_number)
+    continue_button = tk.Button(right_frame,text = 'continue',command = lambda: show_values(selected_attack,selected_model))
+
+    # this section defines the choice of hyperparameters for the trials
+    if selected_attack[0] != None:
+        hyperparameter_settings[:] = [[] for _ in range(len(selected_attack[1]['hyperparameters']))]
+        print(hyperparameter_settings)
+        scroll_list(left_frame,display_width=200,display_height=300,entry_height=10, dictionary = attack_dictionary, variable = selected_attack,multi_input = False)
+        root.update_idletasks()
+
+    iteration_size_scale.pack(side='top',pady=(10,0))
+    iteration_number_scale.pack(side='top',pady=(10,0))
+    continue_button.pack(side='bottom')
     right_frame.pack(side = 'left',fill='both', expand=(True))
-    scroll_list(left_frame)
+
     root.mainloop()
 
 if __name__ == "__main__":
-    front_end_main()
+    landing_page()

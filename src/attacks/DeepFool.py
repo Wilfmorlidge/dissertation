@@ -1,7 +1,6 @@
 import numpy as np
 import tensorflow as tf
 from decimal import Decimal
-import random
 
 
 def find_logit_derivative_value(image,logit,model):
