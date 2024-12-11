@@ -47,10 +47,20 @@ def initialize_model(model_string):
 attack_dictionary = {
     'DeepFool' : {
         'algorithm': DeepFool_iteration_step,
-        'hyperparameters': ['overshoot_scalar','pertubation_cap', 'maximum_loop']},
+        'hyperparameters': {
+            'overshoot_scalar': [],
+            'pertubation_cap': [],
+            'maximum_loop': []
+            }
+        },
     'Carlini_Wagner' : {
         'algorithm':Carlini_Wagner_iteration_step,
-        'hyperparameters': ['learning_rate','starting_points','temperature']} 
+        'hyperparameters': {
+            'learning_rate': [],
+            'starting_points': [],
+            'temperature': []
+            }
+        } 
     }
     
 model_dictionary = { 
@@ -89,7 +99,6 @@ model_dictionary = {
 image_trio_dictionary = {}
 graph_dictionary = {}
     
-print(model_dictionary)
 
 def load_dataset(dataset_string):
     if (dataset_string == 'imagenette'):

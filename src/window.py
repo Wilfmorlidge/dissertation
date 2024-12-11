@@ -31,19 +31,34 @@ def single_input_scroll_list_entries(root,display_width,entry_height,dictionary,
 
     def button_event(variable,key,value):
         if variable[0] != key:
+            variable[:] = [None]
             variable[0] = key
             variable.append(value)
         else:
             variable[:] = [None]
 
         return True
-
+    
     for (key, value) in dictionary.items():
         Button = tk.Button(root,text = key,command= lambda k = key, v = value: button_event(variable,k,v), height = entry_height,width=display_width)
         if interactive == False:
             Button.config(state=tk.DISABLED)
         Button.pack(side = 'top',fill='x', expand=(True))
     root.update_idletasks()
+
+def multi_input_scroll_list_entries(list_frame,display_width,entry_height, dictionary, variable):
+    interactive= True
+
+    for (key,value) in dictionary.items():
+        bounding_frame = tk.Frame(list_frame)
+        label = tk.Label(bounding_frame,text=key)
+        Text_widget = tk.Text(bounding_frame, width = display_width // 8, height = entry_height)
+        Text_widget.config(state=tk.NORMAL)
+        label.pack(side = 'top',fill='x', expand=(True))
+        Text_widget.pack(side = 'top',fill='x', expand=(True))
+        bounding_frame.pack(side = 'top',fill='x', expand=(True))
+        variable.append(Text_widget)
+    print(variable)
 
 
 def scroll_list(root,display_width, display_height ,entry_height, dictionary, variable, multi_input):
@@ -62,8 +77,10 @@ def scroll_list(root,display_width, display_height ,entry_height, dictionary, va
     scrollbar = ttk.Scrollbar(object_container, orient='vertical', command=canvas.yview)
     canvas.configure(yscrollcommand=scrollbar.set)
 
-
-    single_input_scroll_list_entries(list_frame,display_width,entry_height, dictionary, variable)
+    if multi_input == True:
+        multi_input_scroll_list_entries(list_frame,display_width,entry_height, dictionary, variable)
+    else:
+        single_input_scroll_list_entries(list_frame,display_width,entry_height, dictionary, variable)
 
     root.update_idletasks()
     expection_frame = tk.Frame(list_frame,height=1, highlightbackground='dimgray', bg='dimgray')
@@ -79,29 +96,37 @@ def scroll_list(root,display_width, display_height ,entry_height, dictionary, va
     object_container.update_idletasks()
     canvas.yview_moveto(0)
 
+
 def landing_page():
     selected_attack = [None]
     selected_model = [None]
     iteration_size = 5
     iteration_number = 1
-    hyperparameter_settings = [None]
+    hyperparameter_settings = []
 
-    def create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack):
+    def create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack,hyperparameter_settings):
+
         
         if (selected_attack[0] != previous_selected_attack[0]):
+            print(selected_attack)
+            print(previous_selected_attack)
             for widget in right_frame.winfo_children():
                 if hasattr(widget, 'custom_tag') and widget.custom_tag == 'scroll_list':
+                    print('the ides of march')
                     widget.destroy()
             if (selected_attack[0] != None):
-                hyperparameter_settings[:] = [[] for _ in range(len(selected_attack[1]['hyperparameters']))]
-                scroll_list(right_frame,display_width=200,display_height=300,entry_height=10, dictionary = attack_dictionary, variable = selected_attack,multi_input = False)
+                hyperparameter_settings = []
+                print('capitalism')
+                print(selected_attack[1]['hyperparameters'])
+                scroll_list(right_frame,display_width=200,display_height=300,entry_height=10, dictionary = selected_attack[1]['hyperparameters'], variable = hyperparameter_settings,multi_input = True)
                 root.update_idletasks()
             previous_selected_attack = selected_attack.copy()
-        root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack))
+        root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack,hyperparameter_settings))
 
     def show_values(selected_attack,selected_model):
         print(selected_attack)
         print(selected_model)
+        print(hyperparameter_settings)
 
 
     root = tk.Tk()
@@ -131,7 +156,7 @@ def landing_page():
     continue_button = tk.Button(right_frame,text = 'continue',command = lambda: show_values(selected_attack,selected_model))
 
     # this section defines the choice of hyperparameters for the trials
-    root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,[None]))
+    root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,[None],hyperparameter_settings))
 
     iteration_size_scale.pack(side='top',pady=(10,0))
     iteration_number_scale.pack(side='top',pady=(10,0))
