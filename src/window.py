@@ -30,23 +30,15 @@ def single_input_scroll_list_entries(root,display_width,entry_height,dictionary,
     interactive= True
 
     def button_event(variable,key,value):
-        print('the button event triggered')
-        print(key)
-        print(variable)
-        print(variable[0])
         if variable[0] != key:
             variable[0] = key
             variable.append(value)
         else:
             variable[:] = [None]
-            print(variable)
 
         return True
 
     for (key, value) in dictionary.items():
-        print(dictionary.items())
-        print(key)
-        print(value)
         Button = tk.Button(root,text = key,command= lambda k = key, v = value: button_event(variable,k,v), height = entry_height,width=display_width)
         if interactive == False:
             Button.config(state=tk.DISABLED)
@@ -95,7 +87,6 @@ def landing_page():
     hyperparameter_settings = [None]
 
     def create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack):
-        print('skibipi bop bop bodo upin jazz' + str(selected_attack))
         
         if (selected_attack[0] != previous_selected_attack[0]):
             for widget in right_frame.winfo_children():
@@ -103,11 +94,9 @@ def landing_page():
                     widget.destroy()
             if (selected_attack[0] != None):
                 hyperparameter_settings[:] = [[] for _ in range(len(selected_attack[1]['hyperparameters']))]
-                print(hyperparameter_settings)
                 scroll_list(right_frame,display_width=200,display_height=300,entry_height=10, dictionary = attack_dictionary, variable = selected_attack,multi_input = False)
                 root.update_idletasks()
             previous_selected_attack = selected_attack.copy()
-            print('this is the previous attack' + str(previous_selected_attack))
         root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack))
 
     def show_values(selected_attack,selected_model):
