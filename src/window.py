@@ -115,7 +115,8 @@ def landing_page():
                     print('the ides of march')
                     widget.destroy()
             if (selected_attack[0] != None):
-                hyperparameter_settings = []
+                if hyperparameter_settings[:] != []:
+                    hyperparameter_settings[:] = []
                 print('capitalism')
                 print(selected_attack[1]['hyperparameters'])
                 scroll_list(right_frame,display_width=200,display_height=300,entry_height=10, dictionary = selected_attack[1]['hyperparameters'], variable = hyperparameter_settings,multi_input = True)
@@ -123,9 +124,17 @@ def landing_page():
             previous_selected_attack = selected_attack.copy()
         root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack,hyperparameter_settings))
 
-    def show_values(selected_attack,selected_model):
+    def show_values(selected_attack,selected_model,hyperparameter_settings):
         print(selected_attack)
         print(selected_model)
+        for i in range(len(hyperparameter_settings)):
+            # this gets the value in text field i and converts it into a list of floats (under the assumption that the entry to the field is in csv float format)
+            # then splits the string into substrings via commas and converts the substrings to floats
+            value = hyperparameter_settings[i].get(0.0,'end')
+            if value.strip() == "":
+                hyperparameter_settings[i] = []
+            else:
+                hyperparameter_settings[i] = [float(x) for x in value.split(',')]
         print(hyperparameter_settings)
 
 
@@ -153,7 +162,7 @@ def landing_page():
     right_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
     iteration_size_scale = tk.Scale(right_frame,orient='horizontal',from_=5,to=100,variable=iteration_size)
     iteration_number_scale = tk.Scale(right_frame,orient='horizontal',from_=1,to=10,variable=iteration_number)
-    continue_button = tk.Button(right_frame,text = 'continue',command = lambda: show_values(selected_attack,selected_model))
+    continue_button = tk.Button(right_frame,text = 'continue',command = lambda: show_values(selected_attack,selected_model,hyperparameter_settings))
 
     # this section defines the choice of hyperparameters for the trials
     root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,[None],hyperparameter_settings))
