@@ -31,11 +31,15 @@ def single_input_scroll_list_entries(root,display_width,entry_height,dictionary,
 
     def button_event(variable,key,value):
         print('the button event triggered')
+        print(key)
+        print(variable)
+        print(variable[0])
         if variable[0] != key:
             variable[0] = key
             variable.append(value)
         else:
             variable[:] = [None]
+            print(variable)
 
         return True
 
@@ -52,6 +56,7 @@ def single_input_scroll_list_entries(root,display_width,entry_height,dictionary,
 
 def scroll_list(root,display_width, display_height ,entry_height, dictionary, variable, multi_input):
     object_container = tk.Frame(root,height = 50, width = display_width, bg='dimgray', highlightbackground='dimgray')
+    object_container.custom_tag = 'scroll_list'
     canvas = tk.Canvas(object_container, width = (display_width-4), height = display_height, bg='dimgray', highlightbackground='dimgray')
     list_frame = tk.Frame(canvas, bg="dimgray", highlightbackground='dimgray')
     list_frame.bind(
@@ -89,6 +94,22 @@ def landing_page():
     iteration_number = 1
     hyperparameter_settings = [None]
 
+    def create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack):
+        print('skibipi bop bop bodo upin jazz' + str(selected_attack))
+        
+        if (selected_attack[0] != previous_selected_attack[0]):
+            for widget in right_frame.winfo_children():
+                if hasattr(widget, 'custom_tag') and widget.custom_tag == 'scroll_list':
+                    widget.destroy()
+            if (selected_attack[0] != None):
+                hyperparameter_settings[:] = [[] for _ in range(len(selected_attack[1]['hyperparameters']))]
+                print(hyperparameter_settings)
+                scroll_list(right_frame,display_width=200,display_height=300,entry_height=10, dictionary = attack_dictionary, variable = selected_attack,multi_input = False)
+                root.update_idletasks()
+            previous_selected_attack = selected_attack.copy()
+            print('this is the previous attack' + str(previous_selected_attack))
+        root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack))
+
     def show_values(selected_attack,selected_model):
         print(selected_attack)
         print(selected_model)
@@ -121,11 +142,7 @@ def landing_page():
     continue_button = tk.Button(right_frame,text = 'continue',command = lambda: show_values(selected_attack,selected_model))
 
     # this section defines the choice of hyperparameters for the trials
-    if selected_attack[0] != None:
-        hyperparameter_settings[:] = [[] for _ in range(len(selected_attack[1]['hyperparameters']))]
-        print(hyperparameter_settings)
-        scroll_list(left_frame,display_width=200,display_height=300,entry_height=10, dictionary = attack_dictionary, variable = selected_attack,multi_input = False)
-        root.update_idletasks()
+    root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,[None]))
 
     iteration_size_scale.pack(side='top',pady=(10,0))
     iteration_number_scale.pack(side='top',pady=(10,0))
