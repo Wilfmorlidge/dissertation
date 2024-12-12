@@ -30,3 +30,4 @@ def run_adversarial_trial(iteration_size,selected_attack,selected_model,trial_hy
     predictions = calculate_output_data(final_database,selected_model[1])
 
     print(predictions)
+    
