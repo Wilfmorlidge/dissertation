@@ -64,18 +64,31 @@ def update_loss_function(image, pertubed_image, model, learning_rate, target_cla
     return image, pertubed_image, pertubation_delta, loss, scores
 
 
-def Carlini_Wagner_iteration_step(image,classification,model, class_list, maximal_loop = 50,temperature = 1, k = -0.2, learning_rate = 10000.0,maximum_pertubation_distance = 1000.0):
+def Carlini_Wagner_iteration_step(image,classification,model, class_list, learning_rate, starting_points,temperature, k,perubation_cap, maximal_loop):
         np.set_printoptions(precision=20)
         current_class_list = np.copy(class_list).tolist()
         current_class_list.remove(classification)
         target_class = random.choice(current_class_list)
-        starting_points = 1
         positions = np.random.uniform(-temperature,temperature,(starting_points, *image.shape))
         true_image = np.expand_dims(image,axis=0)
         outer_counter = 0
         outputs= []
         print(target_class)
         print(classification)
+
+        # this section checks if hyperparameters are undefined and sets them to default
+        if learning_rate == None:
+             learning_rate = 10000.0
+        if starting_points == None:
+            starting_points = 1.0
+        if temperature == None:
+            temperature = 1
+        if k == None:
+            k = 0.2
+        if perubation_cap == None:
+            perubation_cap = 1000.0
+        if maximal_loop == None:
+            maximal_loop = 50
 
         #this section causes the gradient descent to be started from multiple points
         for entry in positions:
@@ -100,7 +113,7 @@ def Carlini_Wagner_iteration_step(image,classification,model, class_list, maxima
 
         #this section identifies which of the calculated pertubed images produces the lowest loss.
         image, pertubation_delta = optimal_image_calculator(outputs)
-        if (np.linalg.norm(image-true_image) < maximum_pertubation_distance):
+        if (np.linalg.norm(image-true_image) < perubation_cap):
             return image, pertubation_delta
         else:
             return true_image, np.zeros((image.shape))

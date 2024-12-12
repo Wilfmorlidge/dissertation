@@ -51,7 +51,6 @@ attack_dictionary = {
             'overshoot_scalar': [],
             'pertubation_cap': [],
             'maximum_loop': [],
-            'maximum_pertubation_distance': []
             }
         },
     'Carlini_Wagner' : {
@@ -61,7 +60,8 @@ attack_dictionary = {
             'starting_points': [],
             'temperature': [],
             'k': [],
-            'maximum_pertubation_distance': []
+            'pertubation_cap': [],
+            'maximal_loop': []
             }
         } 
     }

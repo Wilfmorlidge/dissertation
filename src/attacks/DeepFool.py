@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from decimal import Decimal
-
+import inspect
 
 def find_logit_derivative_value(image,logit,model):
     # this function calculates the gradient of network logic (the value for a possible class prior to the final softmax layer) with respect to a single input image)
@@ -37,7 +37,7 @@ def calculate_cumulative_pertubation(optimizer_values,image,cumulative_pertubati
         image = perform_arbitary_precision_addition_of_numpy_arrays(image, cumulative_pertubation)    
         return cumulative_pertubation, image
 
-def DeepFool_iteration_step(image,classification,model, class_list, maximal_loop = 50, overshoot_scalar = 0.2, maximum_pertubation_distance = 1000.0):
+def DeepFool_iteration_step(image,classification,model, class_list, overshoot_scalar, pertubation_cap, maximal_loop):
 
         #in this section necessary variables are defined
         np.set_printoptions(precision=20)
@@ -46,7 +46,21 @@ def DeepFool_iteration_step(image,classification,model, class_list, maximal_loop
         scores = model(np.expand_dims(image, axis=0))
         loop_counter = 0
         cumulative_pertubation = np.zeros((image.shape))
+
+        #this section checks for unspecified parameter values and sets them to default
+        if overshoot_scalar == None:
+            overshoot_scalar = 0.2
+        if pertubation_cap == None:
+             pertubation_cap = 1000.0
+        if maximal_loop == None:
+             maximal_loop = 50
+
+
         print('this is the overshoot scalar' + str(overshoot_scalar))
+        print(pertubation_cap)
+        print(maximal_loop)
+
+        
 
 
         while ((loop_counter < maximal_loop) and (np.argmax(scores) == classification)):
@@ -66,7 +80,7 @@ def DeepFool_iteration_step(image,classification,model, class_list, maximal_loop
             cumulative_pertubation,image = calculate_cumulative_pertubation(optimizer_values,image,cumulative_pertubation,logit_derivative_for_true_class,overshoot_scalar)
             scores = model(np.expand_dims(image, axis=0))
 
-        if (np.linalg.norm(image-true_image) < maximum_pertubation_distance):
+        if (np.linalg.norm(image-true_image) < pertubation_cap):
             return image, cumulative_pertubation
         else:
             return true_image, np.zeros((image.shape))
