@@ -169,19 +169,8 @@ class AdversarialAttacks:
 
 
 
-def generate_pertubations(database,model,adversary_string,class_list) :
-    if adversary_string == 'none':
-        final_database = {'unpertubed_images': [],'pertubed_images': [],'pertubations': [], 'classifications': database['classifications']}
-        for iteration in range (0,len(np.array(database['images']))):
-            image = np.array(database['images'][iteration])
-            final_database['unpertubed_images'].append(image)
-            final_database['pertubations'].append(np.zeros((image.shape)))
-            final_database['pertubed_images'].append(image)
-        return final_database
-    else:
+def generate_pertubations(database,selected_model,selected_attack,class_list,trial_hyperparameters) :
         # this represents an extensible way of retrieving the iteration step function for the addition of pertubation.
-        iteration_method_name = f"{adversary_string}_iteration_step"
-        iteration_method = getattr(AdversarialAttacks(),iteration_method_name)
         final_database = {'unpertubed_images': [],'pertubed_images': [],'pertubations': [], 'classifications': database['classifications']}
         #this causes the iteration function corresponding to the selected attack to be run for all images passed in
         for iteration in range (0,len(np.array(database['images']))):
@@ -194,7 +183,7 @@ def generate_pertubations(database,model,adversary_string,class_list) :
             #this causes the pertubation to be calculated
 
             print('pertubing image:' + str(iteration))
-            pertubed_image, pertubation = iteration_method(image,database['classifications'][iteration],model,class_list)
+            pertubed_image, pertubation = selected_attack(image,database['classifications'][iteration],selected_model,class_list)
 
 
 

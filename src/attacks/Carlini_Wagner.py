@@ -64,7 +64,7 @@ def update_loss_function(image, pertubed_image, model, learning_rate, target_cla
     return image, pertubed_image, pertubation_delta, loss, scores
 
 
-def Carlini_Wagner_iteration_step(self,image,classification,model, class_list, maximal_loop = 50,temperature = 1, k = -0.2, learning_rate = 10000.0,maximum_pertubation_distance = 1000.0):
+def Carlini_Wagner_iteration_step(image,classification,model, class_list, maximal_loop = 50,temperature = 1, k = -0.2, learning_rate = 10000.0,maximum_pertubation_distance = 1000.0):
         np.set_printoptions(precision=20)
         current_class_list = np.copy(class_list).tolist()
         current_class_list.remove(classification)

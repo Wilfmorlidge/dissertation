@@ -1,10 +1,14 @@
 import tensorflow as tf
 import numpy as np
 import tensorflow_datasets as tfds
-from window import denormalize_and_save_image
 from PIL import Image
 
 #resize the image to the size expected by the network
+def denormalize_and_save_image(image,ident,type):
+    display_2 = Image.fromarray(((image - image.min()) / (image.max() - image.min()) * 255).astype(np.uint8))
+    display_2.save(f'./images/{type}/image_{ident}.png')
+
+
 def resize_image(image):
     image = tf.image.resize(image, (224,224))
     return image

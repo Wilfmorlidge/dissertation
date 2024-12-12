@@ -50,7 +50,8 @@ attack_dictionary = {
         'hyperparameters': {
             'overshoot_scalar': [],
             'pertubation_cap': [],
-            'maximum_loop': []
+            'maximum_loop': [],
+            'maximum_pertubation_distance': []
             }
         },
     'Carlini_Wagner' : {
@@ -58,7 +59,9 @@ attack_dictionary = {
         'hyperparameters': {
             'learning_rate': [],
             'starting_points': [],
-            'temperature': []
+            'temperature': [],
+            'k': [],
+            'maximum_pertubation_distance': []
             }
         } 
     }

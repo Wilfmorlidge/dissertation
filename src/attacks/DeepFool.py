@@ -37,7 +37,7 @@ def calculate_cumulative_pertubation(optimizer_values,image,cumulative_pertubati
         image = perform_arbitary_precision_addition_of_numpy_arrays(image, cumulative_pertubation)    
         return cumulative_pertubation, image
 
-def DeepFool_iteration_step(self,image,classification,model, class_list, maximal_loop = 50, overshoot_scalar = 0.2, maximum_pertubation_distance = 1000.0):
+def DeepFool_iteration_step(image,classification,model, class_list, maximal_loop = 50, overshoot_scalar = 0.2, maximum_pertubation_distance = 1000.0):
 
         #in this section necessary variables are defined
         np.set_printoptions(precision=20)
