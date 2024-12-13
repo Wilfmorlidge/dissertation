@@ -65,17 +65,7 @@ def update_loss_function(image, pertubed_image, model, learning_rate, target_cla
 
 
 def Carlini_Wagner_iteration_step(image,classification,model, class_list, learning_rate, starting_points,temperature, k,perubation_cap, maximal_loop):
-        np.set_printoptions(precision=20)
-        current_class_list = np.copy(class_list).tolist()
-        current_class_list.remove(classification)
-        target_class = random.choice(current_class_list)
-        positions = np.random.uniform(-temperature,temperature,(starting_points, *image.shape))
-        true_image = np.expand_dims(image,axis=0)
-        outer_counter = 0
-        outputs= []
-        print(target_class)
-        print(classification)
-
+       
         # this section checks if hyperparameters are undefined and sets them to default
         if learning_rate == None:
              learning_rate = 10000.0
@@ -89,6 +79,17 @@ def Carlini_Wagner_iteration_step(image,classification,model, class_list, learni
             perubation_cap = 1000.0
         if maximal_loop == None:
             maximal_loop = 50
+       
+        np.set_printoptions(precision=20)
+        current_class_list = np.copy(class_list).tolist()
+        current_class_list.remove(classification)
+        target_class = random.choice(current_class_list)
+        positions = np.random.uniform(-temperature,temperature,(int(starting_points), *image.shape))
+        true_image = np.expand_dims(image,axis=0)
+        outer_counter = 0
+        outputs= []
+        print(target_class)
+        print(classification)#
 
         #this section causes the gradient descent to be started from multiple points
         for entry in positions:

@@ -5,13 +5,13 @@ from network import normalize_database,calculate_output_data
 #from definitions import initialize_model, load_dataset
 from adversary import generate_pertubations
 import itertools
+import queue
 
 
 print('is this instance running with cuda' + str(tf.test.is_built_with_cuda()))
 print('available GPUs: ' + str(tf.config.list_physical_devices('GPU')))
 
-def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_model,hyperparameter_settings):
-    prediction_list = []
+def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_model,hyperparameter_settings,output_queue):
     # this section clips the input hyperparameters, so that if not enough values are provided they cycle,
     # and if to many values are provided the ones at positions greater than iteration number get removed
     # and empty fields are filled with Nones to specify that default values should be used
@@ -28,7 +28,7 @@ def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_
     print('this is the final hyperparameter value' +str(hyperparameter_settings))
 
     for counter in range(0,iteration_number):
-        prediction_list.append(run_adversarial_trial(iteration_size,selected_attack,selected_model,[sublist[counter] for sublist in hyperparameter_settings]))
+            output_queue.put(run_adversarial_trial(iteration_size,selected_attack,selected_model,[sublist[counter] for sublist in hyperparameter_settings]))
 
 
 def run_adversarial_trial(iteration_size,selected_attack,selected_model,trial_hyperparameters):

@@ -5,6 +5,7 @@ import sys
 from definitions import attack_dictionary,model_dictionary
 from main import back_end_main_loop
 import threading
+import queue
 
 from tkinter import ttk
 
@@ -110,6 +111,21 @@ def scroll_list(root,display_width, display_height ,entry_height, dictionary, va
     object_container.update_idletasks()
     canvas.yview_moveto(0)
 
+def output_page(root,output_queue):
+    def check_queue(root, output_queue):
+        while not output_queue.empty():
+            result = output_queue.get()
+            print('this is the queue as received in the main thread' + str(result))
+            label = tk.Label(root,text=str(result))
+            label.pack(side = 'top',fill='y', expand=(True))
+        root.after(500, lambda: check_queue(root,output_queue))
+    
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    root.after(100,lambda: check_queue(root,output_queue))
+
 
 def landing_page():
     selected_attack = [None]
@@ -136,23 +152,28 @@ def landing_page():
             previous_selected_attack = selected_attack.copy()
         root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack,hyperparameter_settings))
 
-    def move_to_output_page(selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number,root):
+    def move_to_output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number):
         print(selected_attack)
         print(selected_model)
         print(iteration_number.get())
         print(iteration_size.get())
+
+        if (selected_attack != [None]) and (selected_model != [None]):
         #this resolves the values of the hyperparameter_settings text fields into actual float values for the hyperparameters.
-        for i in range(len(hyperparameter_settings)):
-            # this gets the value in text field i and converts it into a list of floats (under the assumption that the entry to the field is in csv float format)
-            # then splits the string into substrings via commas and converts the substrings to floats
-            value = hyperparameter_settings[i].get(0.0,'end')
-            if value.strip() == "":
-                hyperparameter_settings[i] = []
-            else:
-                hyperparameter_settings[i] = [float(x) for x in value.split(',')]
-        print(hyperparameter_settings)
-        adversarial_attack_thread = threading.Thread(target = lambda: back_end_main_loop(int(iteration_size.get()),int(iteration_number.get()),selected_attack,selected_model,hyperparameter_settings))
-        adversarial_attack_thread.start()
+            for i in range(len(hyperparameter_settings)):
+                # this gets the value in text field i and converts it into a list of floats (under the assumption that the entry to the field is in csv float format)
+                # then splits the string into substrings via commas and converts the substrings to floats
+                value = hyperparameter_settings[i].get(0.0,'end')
+                if value.strip() == "":
+                    hyperparameter_settings[i] = []
+                else:
+                    hyperparameter_settings[i] = [float(x) for x in value.split(',')]
+            print(hyperparameter_settings)
+            output_queue = queue.Queue()
+            adversarial_attack_thread = threading.Thread(target = lambda: back_end_main_loop(int(iteration_size.get()),int(iteration_number.get()),selected_attack,selected_model,hyperparameter_settings,output_queue))
+            adversarial_attack_thread.daemon = True
+            adversarial_attack_thread.start()
+            output_page(root,output_queue)
 
 
 
@@ -182,9 +203,9 @@ def landing_page():
     iteration_number = tk.DoubleVar()
     iteration_size_scale = tk.Scale(right_frame,orient='horizontal',from_=5,to=100,variable=iteration_size)
     iteration_number_scale = tk.Scale(right_frame,orient='horizontal',from_=1,to=10,variable=iteration_number)
-    continue_button = tk.Button(right_frame,text = 'continue',command = lambda: move_to_output_page(selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number,root))
+    continue_button = tk.Button(right_frame,text = 'continue',command = lambda: move_to_output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number))
 
-    # this section defines the choice of hyperparameters for the trials
+    # this section creates a callback loop which renders the hyperparameter list only when a valid attack has been chosen.
     root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,[None],hyperparameter_settings))
 
     iteration_size_scale.pack(side='top',pady=(10,0))
