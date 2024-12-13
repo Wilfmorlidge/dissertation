@@ -1,48 +1,9 @@
 import tensorflow as tf
 import tensorflow_datasets as tfds
-import sys
 
-sys.path.insert(0, 'c:\\Users\\wilfm\\dissertation\\dissertation\\src\\attacks')
+from trial_runner.attacks.DeepFool import DeepFool_iteration_step
 
-from DeepFool import DeepFool_iteration_step
-
-from Carlini_Wagner import Carlini_Wagner_iteration_step
-
-def initialize_model(model_string):
-    if (model_string == 'resnet'):
-        return tf.keras.applications.ResNet50(
-        include_top=True,
-        weights="imagenet",
-        classifier_activation="softmax"
-    )
-    elif (model_string == 'efficientnet'):
-        return tf.keras.applications.EfficientNetB0(
-            include_top=True,
-            weights='imagenet',
-            input_tensor=None,
-            classifier_activation='softmax',
-        )
-    elif (model_string == 'mobilenet'):
-        return tf.keras.applications.MobileNetV2(
-            input_shape=None,
-            alpha=1.0,
-            include_top=True,
-            weights='imagenet',
-            input_tensor=None,
-            pooling=None,
-            classes=1000,
-            classifier_activation='softmax'
-        )
-    elif (model_string == 'vgg19'):
-        return tf.keras.applications.VGG19(
-            include_top=True,
-            weights='imagenet',
-            input_tensor=None,
-            input_shape=None,
-            pooling=None,
-            classes=1000,
-            classifier_activation='softmax'
-        )
+from trial_runner.attacks.Carlini_Wagner import Carlini_Wagner_iteration_step
     
 attack_dictionary = {
     'DeepFool' : {

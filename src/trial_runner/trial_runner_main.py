@@ -1,11 +1,10 @@
 import tensorflow as tf
 import numpy as np
 import tensorflow_datasets as tfds
-from network import normalize_database,calculate_output_data
+from trial_runner.network_functions import normalize_database,calculate_output_data
 #from definitions import initialize_model, load_dataset
-from adversary import generate_pertubations
+from trial_runner.adversary_handler import generate_pertubations
 import itertools
-import queue
 
 
 print('is this instance running with cuda' + str(tf.test.is_built_with_cuda()))

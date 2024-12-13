@@ -7,14 +7,14 @@ import sys
 import numpy.testing as npt
 import tensorflow_datasets as tfds
 from unittest.mock import patch
+import os
 
 database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_files=True, with_info=True)
 
 # adding Folder_2 to the system path
 sys.path.insert(0, './src')
 
-from network import resize_image, normalize_database, calculate_output_data
-from window import denormalize_and_save_image
+from trial_runner.network_functions import resize_image, normalize_database, calculate_output_data, denormalize_and_save_image
 
 class BasicNetworkTests(unittest.TestCase):
     #test that the resize function performs as expected
@@ -41,6 +41,12 @@ class BasicNetworkTests(unittest.TestCase):
         self.assertIn('confidences',results)
         self.assertIn('classes',results)
         self.assertIn('accuracy',results)
+
+    def test_saving_of_normalized_image(self):
+        test_image = np.random.uniform(-50,50,(224,224,3))
+        denormalize_and_save_image(test_image,'test_image_please_ignore','pertubed')
+        self.assertTrue(os.path.isfile('./images/pertubed/image_test_image_please_ignore.png'))
+        os.remove('./images/pertubed/image_test_image_please_ignore.png')
 
 
 if __name__ == '__main__':
