@@ -27,10 +27,12 @@ def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_
     print('this is the final hyperparameter value' +str(hyperparameter_settings))
 
     for counter in range(0,iteration_number):
-            output_queue.put(run_adversarial_trial(iteration_size,selected_attack,selected_model,[sublist[counter] for sublist in hyperparameter_settings]))
+            trial_results = run_adversarial_trial(iteration_size,selected_attack,selected_model,[sublist[counter] for sublist in hyperparameter_settings],counter)
+            trial_results['trial_number'] = counter
+            output_queue.put(trial_results)
 
 
-def run_adversarial_trial(iteration_size,selected_attack,selected_model,trial_hyperparameters):
+def run_adversarial_trial(iteration_size,selected_attack,selected_model,trial_hyperparameters,counter):
     print(trial_hyperparameters)
     #this loads the database
     database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_files=True, with_info=True)
@@ -48,7 +50,7 @@ def run_adversarial_trial(iteration_size,selected_attack,selected_model,trial_hy
     final_database = generate_pertubations(normalized_database,selected_model[1],selected_attack[1]['algorithm'],class_list,trial_hyperparameters)
 
     # this tests the pertubed data against the network
-    predictions = calculate_output_data(final_database,selected_model[1])
+    predictions = calculate_output_data(final_database,selected_model[1],counter)
 
     print(predictions)
 

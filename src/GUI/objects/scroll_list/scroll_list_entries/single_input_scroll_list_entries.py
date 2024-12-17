@@ -1,6 +1,6 @@
 import tkinter as tk
 
-def single_input_scroll_list_entries(root,display_width,entry_height,dictionary, variable):
+def single_input_scroll_list_entries(root,display_width,entry_height,dictionary, variable,display_height):
     interactive= True
 
     def button_event(variable,key,value):

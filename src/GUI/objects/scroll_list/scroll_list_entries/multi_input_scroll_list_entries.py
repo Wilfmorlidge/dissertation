@@ -1,7 +1,7 @@
 import tkinter as tk
 
 
-def multi_input_scroll_list_entries(list_frame,display_width,entry_height, dictionary, variable):
+def multi_input_scroll_list_entries(list_frame,display_width,entry_height, dictionary, variable, display_height):
     interactive= True
 
     # this creates a set of text fields and passes them as the value for a mutable list

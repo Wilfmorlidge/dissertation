@@ -25,16 +25,17 @@ def scroll_list(root,display_width, display_height ,entry_height, dictionary, va
     # this determines what kind of entries will be in the scroll list, and then calls the appropriate function
     # this doesn't feel very exstensible so i will try to refactor it after i have finished a first pass at the entire
     # front end
-    entry_function(list_frame,display_width,entry_height, dictionary, variable)
+    entry_function(list_frame,display_width,entry_height, dictionary, variable,display_height)
 
     root.update_idletasks()
     #once the list is initially rendered, this section calculates if the list entries have a combined height of less than the screen
     # and pads under them if they do, thus preventing users from scrolling down when they can already see the whole list.
-    exception_frame = tk.Frame(list_frame,height=1, highlightbackground='dimgray', bg='dimgray')
+    exception_frame = tk.Frame(list_frame,height=1, highlightbackground='dimgray', bg='dimgray',name='exception_frame')
     if list_frame.winfo_height() < display_height:
-        exception_frame.pack(side = 'top',fill='both', expand=(True), pady=(0,(display_height-list_frame.winfo_height())))
+        print('this shit is happening')
+        exception_frame.pack(side = 'bottom',fill='both', expand=(True), pady=(0,(display_height-list_frame.winfo_height())))
     else:
-        exception_frame.pack(side = 'top',fill='both', expand=(True))
+        exception_frame.pack(side = 'bottom',fill='both', expand=(True))
 
     # this finalises the geoemtry manager positions for the objects
     object_container.pack(side='left',expand=True)
