@@ -53,11 +53,7 @@ def move_to_output_page(root,selected_attack,selected_model,hyperparameter_setti
             else:
                 hyperparameter_settings[i] = [float(x) for x in value.split(',')]
         print(hyperparameter_settings)
-        output_queue = queue.Queue()
-        adversarial_attack_thread = threading.Thread(target = lambda: back_end_main_loop(int(iteration_size.get()),int(iteration_number.get()),selected_attack,selected_model,hyperparameter_settings,output_queue))
-        adversarial_attack_thread.daemon = True
-        adversarial_attack_thread.start()
-        output_page(root,output_queue)
+        output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number)
 
 def landing_page():
     selected_attack = [None]

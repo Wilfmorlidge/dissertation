@@ -3,9 +3,42 @@ import numpy as np
 import tensorflow_datasets as tfds
 from PIL import Image
 import os
+import ast
 
 #resize the image to the size expected by the network
 
+def update_cumulative_metrics(counter,iteration_size):
+    current_cumulative_values = None
+    last_trials_values = None
+
+    # this extracts the runnning value for our metrics, and the value for our metrics retrieved from the most recent trial
+    # from the files where they are stored.
+    with open("./results/cumulative_metrics", "r") as file:
+        # Read all lines into a list
+        lines = file.readlines()
+        current_cumulative_values = ast.literal_eval(lines[-1])
+    with open("./results/trial_{counter}/metrics.txt", "r") as file:
+        # Read all lines into a list
+        lines = file.readlines()
+        last_trials_values = ast.literal_eval(lines[-1])
+
+
+    # this section calculates updates to the running values for our metrics
+
+    current_cumulative_values['accuracy'] = ((current_cumulative_values['accuracy'] * (iteration_size * (counter-1))) + (last_trials_values['accuracy'] * iteration_size)) / (iteration_size * counter)
+    current_cumulative_values['mean_pertubation'] = ((current_cumulative_values['mean_pertubation'] * (iteration_size * (counter-1))) + (last_trials_values['mean_pertubation'] * iteration_size)) / (iteration_size * counter)
+    
+    
+    mean_for_trials = 0
+    sum_mean_deviation_for_trials = 0
+
+    for entry in lines:
+        entry = ast.literal_eval(entry)
+        mean_for_trials += entry['accuracy']
+    mean_for_trials = mean_for_trials / counter
+    
+    current_cumulative_values['GMQ'] = ((current_cumulative_values['GMQ'] * (iteration_size * (counter-1))) + (last_trials_values['GMQ'] * iteration_size)) / (iteration_size * counter)
+    current_cumulative_values['Sharpe_ratio'] = mean_for_trials /  (((1/counter)*sum_mean_deviation_for_trials) ** 0.5)
 def append_images(database,inner_counter, outer_counter,directory_string):
     os.makedirs(directory_string, exist_ok=True)
     os.makedirs(f'{directory_string}/unpertubed', exist_ok=True)
@@ -90,7 +123,6 @@ def calculate_output_data(database,model,outer_counter):
     with open(f'{directory_string}/metrics.txt', "w") as file:
         file.write(str(dictionary))
 
-    return dictionary
 
 
 

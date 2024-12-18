@@ -1,0 +1,1 @@
+{'accuracy': 0, 'mean_pertubation': 0, 'GMQ': 0, 'Sharpe_ratio': 0, 'cumulative_instances': 0}

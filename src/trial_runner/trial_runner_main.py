@@ -1,16 +1,17 @@
 import tensorflow as tf
 import numpy as np
 import tensorflow_datasets as tfds
-from trial_runner.network_functions import normalize_database,calculate_output_data
+from trial_runner.network_functions import normalize_database,calculate_output_data, update_cumulative_metrics
 #from definitions import initialize_model, load_dataset
 from trial_runner.adversary_handler import generate_pertubations
 import itertools
+import os
 
 
 print('is this instance running with cuda' + str(tf.test.is_built_with_cuda()))
 print('available GPUs: ' + str(tf.config.list_physical_devices('GPU')))
 
-def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_model,hyperparameter_settings,output_queue):
+def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_model,hyperparameter_settings,image_queue,metric_queue):
     # this section clips the input hyperparameters, so that if not enough values are provided they cycle,
     # and if to many values are provided the ones at positions greater than iteration number get removed
     # and empty fields are filled with Nones to specify that default values should be used
@@ -26,10 +27,15 @@ def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_
             hyperparameter_settings[counter] = [None] * iteration_number
     print('this is the final hyperparameter value' +str(hyperparameter_settings))
 
+    os.makedirs('./results', exist_ok=True)
+    with open(f'./results/cumulative_metrics.txt', "w") as file:
+        file.write(str({'accuracy': 0, 'mean_pertubation': 0, 'GMQ': 0, 'Sharpe_ratio':0,'cumulative_instances':0}))
+
     for counter in range(0,iteration_number):
-            trial_results = run_adversarial_trial(iteration_size,selected_attack,selected_model,[sublist[counter] for sublist in hyperparameter_settings],counter)
-            trial_results['trial_number'] = counter
-            output_queue.put(trial_results)
+            run_adversarial_trial(iteration_size,selected_attack,selected_model,[sublist[counter] for sublist in hyperparameter_settings],counter)
+            image_queue.put(counter)
+            metric_queue.put(counter)
+            update_cumulative_metrics(counter,iteration_size)
 
 
 def run_adversarial_trial(iteration_size,selected_attack,selected_model,trial_hyperparameters,counter):
@@ -50,10 +56,7 @@ def run_adversarial_trial(iteration_size,selected_attack,selected_model,trial_hy
     final_database = generate_pertubations(normalized_database,selected_model[1],selected_attack[1]['algorithm'],class_list,trial_hyperparameters)
 
     # this tests the pertubed data against the network
-    predictions = calculate_output_data(final_database,selected_model[1],counter)
+    calculate_output_data(final_database,selected_model[1],counter)
 
-    print(predictions)
-
-    return predictions
 
 
