@@ -6,9 +6,9 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
     while not dictionary.empty():
         result = dictionary.get()
         file_count = 0
-        for entry in os.listdir( f"./images/trial_{result['trial_number']}/pertubed"):
+        for entry in os.listdir( f"./results/trial_{result['trial_number']}/pertubed"):
             # Check if the entry is a file
-            if os.path.isfile(os.path.join(f"./images/trial_{result['trial_number']}/pertubed", entry)):
+            if os.path.isfile(os.path.join(f"./results/trial_{result['trial_number']}/pertubed", entry)):
                 file_count += 1
 
         for counter in range(0,file_count):
@@ -20,19 +20,19 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
 
             image_container = tk.Frame(container_container, height = int(entry_height * 4/5))
 
-            unpertubed_image = Image.open( f"./images/trial_{result['trial_number']}/unpertubed/image_{counter}.png")
+            unpertubed_image = Image.open( f"./results/trial_{result['trial_number']}/unpertubed/image_{counter}.png")
             unpertubed_image = unpertubed_image.resize((int(display_width/3),int(entry_height * 4/5)))
             unpertubed_image = ImageTk.PhotoImage(unpertubed_image)
             unpertubed_label = tk.Label(image_container,image = unpertubed_image)
             unpertubed_label.image = unpertubed_image
 
-            pertubation_image = Image.open( f"./images/trial_{result['trial_number']}/pertubation/image_{counter}.png")
+            pertubation_image = Image.open( f"./results/trial_{result['trial_number']}/pertubation/image_{counter}.png")
             pertubation_image = pertubation_image.resize((int(display_width/3),int(entry_height * 4/5)))
             pertubation_image = ImageTk.PhotoImage(pertubation_image)
             pertubation_label = tk.Label(image_container,image = pertubation_image)
             pertubation_label.image = pertubation_image
 
-            pertubed_image = Image.open( f"./images/trial_{result['trial_number']}/pertubed/image_{counter}.png")
+            pertubed_image = Image.open( f"./results/trial_{result['trial_number']}/pertubed/image_{counter}.png")
             pertubed_image = pertubed_image.resize((int(display_width/3),int(entry_height * 4/5)))
             pertubed_image = ImageTk.PhotoImage(pertubed_image)
             pertubed_label = tk.Label(image_container,image = pertubed_image)
