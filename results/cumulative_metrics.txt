@@ -1,1 +1,6 @@
-{'accuracy': 0, 'mean_pertubation': 0, 'GMQ': 0, 'Sharpe_ratio': 0, 'cumulative_instances': 0}
+{'accuracy': 0, 'mean_pertubation': 0, 'GMQ': 0, 'Sharpe_ratio': 0}
+{'accuracy': 0.2, 'mean_pertubation': 8.432805092141148, 'GMQ': 0.1563012719154358, 'Sharpe_ratio': 'Infinity'}
+{'accuracy': 0.3, 'mean_pertubation': 23.659034588516683, 'GMQ': 0.09275371730327606, 'Sharpe_ratio': 2.9999999999999996}
+{'accuracy': 0.3333333333333333, 'mean_pertubation': 22.075846864459777, 'GMQ': 0.076711106300354, 'Sharpe_ratio': 3.5355339059327373}
+{'accuracy': 0.3, 'mean_pertubation': 44.60747763878858, 'GMQ': 0.08659860789775849, 'Sharpe_ratio': 2.9999999999999996}
+{'accuracy': 0.28, 'mean_pertubation': 60.66474467906507, 'GMQ': 0.0816394031047821, 'Sharpe_ratio': 2.857738033247041}

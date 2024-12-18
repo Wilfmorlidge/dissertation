@@ -25,16 +25,14 @@ def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_
                 hyperparameter_settings[counter] = list(itertools.islice(itertools.cycle(hyperparameter_settings[counter]), iteration_number))
         else:
             hyperparameter_settings[counter] = [None] * iteration_number
-    print('this is the final hyperparameter value' +str(hyperparameter_settings))
 
     os.makedirs('./results', exist_ok=True)
     with open(f'./results/cumulative_metrics.txt', "w") as file:
-        file.write(str({'accuracy': 0, 'mean_pertubation': 0, 'GMQ': 0, 'Sharpe_ratio':0,'cumulative_instances':0}))
+        file.write(str({'accuracy': 0, 'mean_pertubation': 0, 'GMQ': 0, 'Sharpe_ratio':0}))
 
     for counter in range(0,iteration_number):
             run_adversarial_trial(iteration_size,selected_attack,selected_model,[sublist[counter] for sublist in hyperparameter_settings],counter)
             image_queue.put(counter)
-            metric_queue.put(counter)
             update_cumulative_metrics(counter,iteration_size)
 
 

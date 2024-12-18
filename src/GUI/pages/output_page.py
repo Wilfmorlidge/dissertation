@@ -31,7 +31,7 @@ def output_page(root,selected_attack,selected_model,hyperparameter_settings,iter
     left_frame.pack(side = 'left',fill='both', expand=(True))
 
     middle_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
-    result_display(middle_frame,display_width=200,display_height=500,queue=metric_queue)
+    result_display(middle_frame,display_width=200,display_height=500)
     middle_frame.pack(side = 'left',fill='both', expand=(True))
 
     right_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')

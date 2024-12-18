@@ -13,11 +13,11 @@ def update_cumulative_metrics(counter,iteration_size):
 
     # this extracts the runnning value for our metrics, and the value for our metrics retrieved from the most recent trial
     # from the files where they are stored.
-    with open("./results/cumulative_metrics", "r") as file:
+    with open(f"./results/cumulative_metrics.txt", "r") as file:
         # Read all lines into a list
         lines = file.readlines()
         current_cumulative_values = ast.literal_eval(lines[-1])
-    with open("./results/trial_{counter}/metrics.txt", "r") as file:
+    with open(f"./results/trial_{counter}/metrics.txt", "r") as file:
         # Read all lines into a list
         lines = file.readlines()
         last_trials_values = ast.literal_eval(lines[-1])
@@ -25,20 +25,44 @@ def update_cumulative_metrics(counter,iteration_size):
 
     # this section calculates updates to the running values for our metrics
 
-    current_cumulative_values['accuracy'] = ((current_cumulative_values['accuracy'] * (iteration_size * (counter-1))) + (last_trials_values['accuracy'] * iteration_size)) / (iteration_size * counter)
-    current_cumulative_values['mean_pertubation'] = ((current_cumulative_values['mean_pertubation'] * (iteration_size * (counter-1))) + (last_trials_values['mean_pertubation'] * iteration_size)) / (iteration_size * counter)
-    
+    current_cumulative_values['accuracy'] = ((current_cumulative_values['accuracy'] * (iteration_size * counter)) + (last_trials_values['accuracy'] * iteration_size)) / (iteration_size * (counter+1))
+    current_cumulative_values['mean_pertubation'] = ((current_cumulative_values['mean_pertubation'] * (iteration_size * counter)) + (last_trials_values['mean_pertubation'] * iteration_size)) / (iteration_size * (counter+1))
+    current_cumulative_values['GMQ'] = ((current_cumulative_values['GMQ'] * (iteration_size * counter)) + (last_trials_values['GMQ'] * iteration_size)) / (iteration_size * (counter+1))
     
     mean_for_trials = 0
     sum_mean_deviation_for_trials = 0
 
-    for entry in lines:
-        entry = ast.literal_eval(entry)
-        mean_for_trials += entry['accuracy']
-    mean_for_trials = mean_for_trials / counter
+    inner_counter = 0
+    for counter in range (0,(counter+1)):
+        inner_counter = counter
+        with open(f"./results/trial_{counter}/metrics.txt", "r") as file:
+        # Read all lines into a list
+            lines = file.readlines()
+        entry_trial_values = ast.literal_eval(lines[-1])
+        mean_for_trials += entry_trial_values['accuracy'] * iteration_size
+    mean_for_trials = mean_for_trials / ((inner_counter+1)*iteration_size)
+
     
-    current_cumulative_values['GMQ'] = ((current_cumulative_values['GMQ'] * (iteration_size * (counter-1))) + (last_trials_values['GMQ'] * iteration_size)) / (iteration_size * counter)
-    current_cumulative_values['Sharpe_ratio'] = mean_for_trials /  (((1/counter)*sum_mean_deviation_for_trials) ** 0.5)
+    for counter in range (0,(counter+1)):
+        with open(f"./results/trial_{counter}/metrics.txt", "r") as file:
+        # Read all lines into a list
+            lines = file.readlines()
+        entry_trial_values = ast.literal_eval(lines[-1])
+
+        sum_mean_deviation_for_trials += (entry_trial_values['accuracy'] - mean_for_trials) ** 2
+
+
+    if sum_mean_deviation_for_trials != 0:
+        current_cumulative_values['Sharpe_ratio'] = (mean_for_trials /  (((1/(counter+1))*sum_mean_deviation_for_trials) ** 0.5))
+    else:
+        current_cumulative_values['Sharpe_ratio'] = 'Infinity'
+
+    with open(f"./results/cumulative_metrics.txt", 'a') as file:
+        file.write(f'\n{current_cumulative_values}')
+
+
+
+
 def append_images(database,inner_counter, outer_counter,directory_string):
     os.makedirs(directory_string, exist_ok=True)
     os.makedirs(f'{directory_string}/unpertubed', exist_ok=True)
@@ -64,7 +88,6 @@ def re_label_image(label,class_list):
     return mapping.get(label,label)
 
 def normalize_database(unnormalised_database,length,model_string,class_list, info='info not provided'):
-    print(info)
     # shuffle the dataset and extract a subset for processing
     database = tfds.as_numpy((unnormalised_database.shuffle(buffer_size=1000)).take(length))
     normalized_database = {'images': [], 'classifications': []}
@@ -110,8 +133,8 @@ def calculate_output_data(database,model,outer_counter):
     GMQ = misplaceed_confidence_sum / len(scores)
     mean_pertubation = pertubation_sum / len(scores)
     dictionary = {
-                  'confidences': np.array(confidences),
-                  'classes': np.array(classes),
+                  'confidences': confidences,
+                  'classes': classes,
                   'accuracy': accuracy,
                   'GMQ': GMQ,
                   'mean_pertubation': mean_pertubation
