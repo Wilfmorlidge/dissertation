@@ -11,7 +11,7 @@ import os
 print('is this instance running with cuda' + str(tf.test.is_built_with_cuda()))
 print('available GPUs: ' + str(tf.config.list_physical_devices('GPU')))
 
-def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_model,hyperparameter_settings,image_queue,metric_queue):
+def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_model,hyperparameter_settings,image_queue,graph_queue):
     # this section clips the input hyperparameters, so that if not enough values are provided they cycle,
     # and if to many values are provided the ones at positions greater than iteration number get removed
     # and empty fields are filled with Nones to specify that default values should be used
@@ -33,6 +33,7 @@ def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_
     for counter in range(0,iteration_number):
             run_adversarial_trial(iteration_size,selected_attack,selected_model,[sublist[counter] for sublist in hyperparameter_settings],counter)
             image_queue.put(counter)
+            graph_queue.put(counter)
             update_cumulative_metrics(counter,iteration_size)
 
 
