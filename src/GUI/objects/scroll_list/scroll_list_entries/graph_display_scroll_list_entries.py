@@ -12,7 +12,6 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
 
 
     def update_graph_frames(list_frame,display_width,entry_height, dictionary, variable, display_height,accuracy_frame,mean_pertubation_frame,GMQ_frame,Sharpe_ratio_frame):
-        print('life is without joy or meaning')
         flag = 0
         while not dictionary.empty():
             dictionary.get()
@@ -28,7 +27,6 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
                 # Read all lines into a list
                 lines = file.readlines()
             for line in lines:
-                print('fuck this shit' + str(line))
                 values = ast.literal_eval(line)
                 accuracy_points.append(values['accuracy'])
                 mean_pertubation_points.append(values['mean_pertubation'])
@@ -108,6 +106,5 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
 
         list_frame.after(500, lambda: update_graph_frames(list_frame,display_width,entry_height, dictionary, variable, display_height,accuracy_frame,mean_pertubation_frame,GMQ_frame,Sharpe_ratio_frame))
 
-    print('all is death plague and rot')
     list_frame.after(100, lambda: update_graph_frames(list_frame,display_width,entry_height, dictionary, variable, display_height,accuracy_frame,mean_pertubation_frame,GMQ_frame,Sharpe_ratio_frame))
 

@@ -32,7 +32,6 @@ def scroll_list(root,display_width, display_height ,entry_height, dictionary, va
     # and pads under them if they do, thus preventing users from scrolling down when they can already see the whole list.
     exception_frame = tk.Frame(list_frame,height=1, highlightbackground='dimgray', bg='dimgray',name='exception_frame')
     if list_frame.winfo_height() < display_height:
-        print('this shit is happening')
         exception_frame.pack(side = 'bottom',fill='both', expand=(True), pady=(0,(display_height-list_frame.winfo_height())))
     else:
         exception_frame.pack(side = 'bottom',fill='both', expand=(True))

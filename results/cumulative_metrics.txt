@@ -1,2 +1,1 @@
 {'accuracy': 0, 'mean_pertubation': 0, 'GMQ': 0, 'Sharpe_ratio': 0}
-{'accuracy': 0.2, 'mean_pertubation': 27.163328479043535, 'GMQ': 0.07369735240936279, 'Sharpe_ratio': 'Infinity'}
