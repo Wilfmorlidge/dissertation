@@ -48,17 +48,17 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
 
             container_container.pack(side='top',fill='x', expand=(True))
 
-        total_height = 0
-        extension_frame = None
-        for widget in root.winfo_children():
-            if widget.winfo_name() == 'exception_frame':
-                extension_frame = widget
-            else:
-                total_height += widget.winfo_height()
-            widget.update_idletasks()  # Ensure the widget's geometry is updated
-        if extension_frame != None:
-            extension_frame.pack_forget()  # Remove the widget from its current packing
-            extension_frame.pack(side='bottom', fill='x',pady=(0,(max((display_height-total_height),0))))  # Re-pack it at the bottom
+        #total_height = 0
+        #extension_frame = None
+        #for widget in root.winfo_children():
+        #    if widget.winfo_name() == 'exception_frame':
+        #        extension_frame = widget
+        #    else:
+        #        total_height += widget.winfo_height()
+        #    widget.update_idletasks()  # Ensure the widget's geometry is updated
+        #if extension_frame != None:
+        #    extension_frame.pack_forget()  # Remove the widget from its current packing
+        #    extension_frame.pack(side='bottom', fill='x',pady=(0,(max((display_height-total_height),0))))  # Re-pack it at the bottom
     
     root.after(500, lambda: update_image_display_entries(root,display_width,entry_height,dictionary, variable,display_height))
 1

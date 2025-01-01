@@ -1,1 +1,6 @@
 {'accuracy': 0, 'mean_pertubation': 0, 'GMQ': 0, 'Sharpe_ratio': 0}
+{'accuracy': 0.2, 'mean_pertubation': 156.2763509063273, 'GMQ': 0.05251752138137818, 'Sharpe_ratio': 0}
+{'accuracy': 0.2, 'mean_pertubation': 109.10097384938088, 'GMQ': 0.05926282107830048, 'Sharpe_ratio': 0}
+{'accuracy': 0.13333333333333333, 'mean_pertubation': 127.4726952972511, 'GMQ': 0.042653871824344, 'Sharpe_ratio': 1.414213562373095}
+{'accuracy': 0.15, 'mean_pertubation': 105.10721915656578, 'GMQ': 0.05540980640798807, 'Sharpe_ratio': 1.732050807568877}
+{'accuracy': 0.16, 'mean_pertubation': 98.3385544357864, 'GMQ': 0.06261583402752877, 'Sharpe_ratio': 2.0}

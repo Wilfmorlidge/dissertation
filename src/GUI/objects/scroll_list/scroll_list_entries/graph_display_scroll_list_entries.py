@@ -53,6 +53,9 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
     
             accuracy_frame.pack(side='top', fill='both', expand=True)
 
+            for widget in mean_pertubation_frame.winfo_children():
+                widget.destroy()
+
             mean_pertubation_label = tk.Label(mean_pertubation_frame,text='mean_pertubation')
             fig = plt.figure()
             dpi = fig.get_dpi()
@@ -70,6 +73,9 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
     
             mean_pertubation_frame.pack(side='top', fill='both', expand=True)
 
+            for widget in GMQ_frame.winfo_children():
+                widget.destroy()
+
             GMQ_label = tk.Label(GMQ_frame,text='GMQ')
             fig = plt.figure()
             dpi = fig.get_dpi()
@@ -86,6 +92,9 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
             canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
     
             GMQ_frame.pack(side='top', fill='both', expand=True)
+
+            for widget in Sharpe_ratio_frame.winfo_children():
+                widget.destroy()
 
             Sharpe_ratio_label = tk.Label(Sharpe_ratio_frame,text='Sharpe_ratio')
             fig = plt.figure()

@@ -1,6 +1,21 @@
 import tkinter as tk
 from tkinter import ttk
 
+def callback_exception_frame(list_frame,exception_frame,display_height,total_height):
+    # this creates and then calls back a frame which pads the bottom of any display lists whose entries have a combined height less than
+    # that of the display window, this stops it being possible to scroll down near empty lists.
+    current_total_height = 0
+    for widget in list_frame.winfo_children():
+        if widget.winfo_name() == 'exception_frame':
+            exception_frame = widget
+        else:
+            current_total_height += widget.winfo_height()
+    if total_height != current_total_height:
+        widget.update_idletasks()  # Ensure the widget's geometry is updated
+        exception_frame.pack_forget()  # Remove the widget from its current packing
+        exception_frame.pack(side='bottom', fill='x',pady=(0,(max((display_height-current_total_height),0))))  # Re-pack it at the bottom
+    list_frame.after(1000,lambda: callback_exception_frame(list_frame,exception_frame,display_height,current_total_height))
+
 def scroll_list(root,display_width, display_height ,entry_height, dictionary, variable, entry_function):
     #this section puts the frame containing the scroll list entries into a scrollable canvas, and updates the canvases configure to make it 
     # changes shape with the frame.
@@ -30,11 +45,8 @@ def scroll_list(root,display_width, display_height ,entry_height, dictionary, va
     root.update_idletasks()
     #once the list is initially rendered, this section calculates if the list entries have a combined height of less than the screen
     # and pads under them if they do, thus preventing users from scrolling down when they can already see the whole list.
-    exception_frame = tk.Frame(list_frame,height=1, highlightbackground='dimgray', bg='dimgray',name='exception_frame')
-    if list_frame.winfo_height() < display_height:
-        exception_frame.pack(side = 'bottom',fill='both', expand=(True), pady=(0,(display_height-list_frame.winfo_height())))
-    else:
-        exception_frame.pack(side = 'bottom',fill='both', expand=(True))
+
+    list_frame.after(1000,lambda: callback_exception_frame(list_frame,tk.Frame(list_frame,height=1, highlightbackground='dimgray', bg='dimgray',name='exception_frame'),display_height,0))
 
     # this finalises the geoemtry manager positions for the objects
     object_container.pack(side='left',expand=True)

@@ -55,7 +55,7 @@ def update_cumulative_metrics(counter,iteration_size):
     if sum_mean_deviation_for_trials != 0:
         current_cumulative_values['Sharpe_ratio'] = (mean_for_trials /  (((1/(counter+1))*sum_mean_deviation_for_trials) ** 0.5))
     else:
-        current_cumulative_values['Sharpe_ratio'] = 'Infinity'
+        current_cumulative_values['Sharpe_ratio'] = 0
 
     with open(f"./results/cumulative_metrics.txt", 'a') as file:
         file.write(f'\n{current_cumulative_values}')
