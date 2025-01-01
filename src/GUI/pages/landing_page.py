@@ -1,18 +1,13 @@
 import tkinter as tk
-import threading
-import queue
 import sys
 
 sys.path.insert(0, './src')
 
 from definitions import attack_dictionary,model_dictionary
 
-from trial_runner.trial_runner_main import back_end_main_loop
 from GUI.objects.scroll_list.scroll_list import scroll_list
 from GUI.objects.scroll_list.scroll_list_entries.single_input_scroll_list_entries import single_input_scroll_list_entries
 from GUI.objects.scroll_list.scroll_list_entries.multi_input_scroll_list_entries import multi_input_scroll_list_entries
-from GUI.objects.window.window import window
-from GUI.pages.output_page import output_page
 
 
 def create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack,hyperparameter_settings):
@@ -42,6 +37,8 @@ def move_to_output_page(root,selected_attack,selected_model,hyperparameter_setti
     print(iteration_number.get())
     print(iteration_size.get())
 
+    from GUI.pages.output_page import output_page
+
     if (selected_attack != [None]) and (selected_model != [None]):
     #this resolves the values of the hyperparameter_settings text fields into actual float values for the hyperparameters.
         for i in range(len(hyperparameter_settings)):
@@ -55,15 +52,15 @@ def move_to_output_page(root,selected_attack,selected_model,hyperparameter_setti
         print(hyperparameter_settings)
         output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number)
 
-def landing_page():
+def landing_page(root):
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
     selected_attack = [None]
     selected_model = [None]
     hyperparameter_settings = []
 
-    root = tk.Tk()
-
-    # this section defines the root and the background frame
-    window(root)
     top_frame = tk.Frame(root, bg="dimgray", highlightthickness=2, highlightbackground='black', height=200)
     top_frame.pack(side = 'top',fill = tk.X)
     bottom_frame = tk.Frame(root, bg="dimgray", height=200)
@@ -96,7 +93,3 @@ def landing_page():
     continue_button.pack(side='bottom')
     right_frame.pack(side = 'left',fill='both', expand=(True))
 
-    root.mainloop()
-
-if __name__ == "__main__":
-    landing_page()

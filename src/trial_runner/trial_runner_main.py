@@ -6,12 +6,14 @@ from trial_runner.network_functions import normalize_database,calculate_output_d
 from trial_runner.adversary_handler import generate_pertubations
 import itertools
 import os
+import threading
+from threading import Event
 
 
 print('is this instance running with cuda' + str(tf.test.is_built_with_cuda()))
 print('available GPUs: ' + str(tf.config.list_physical_devices('GPU')))
 
-def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_model,hyperparameter_settings,image_queue,graph_queue):
+def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_model,hyperparameter_settings,image_queue,graph_queue,progress_bar_queue,thread_killing_event):
     # this section clips the input hyperparameters, so that if not enough values are provided they cycle,
     # and if to many values are provided the ones at positions greater than iteration number get removed
     # and empty fields are filled with Nones to specify that default values should be used
@@ -34,7 +36,10 @@ def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_
             run_adversarial_trial(iteration_size,selected_attack,selected_model,[sublist[counter] for sublist in hyperparameter_settings],counter)
             image_queue.put(counter)
             graph_queue.put(counter)
+            progress_bar_queue.put(counter)
             update_cumulative_metrics(counter,iteration_size)
+            if thread_killing_event.is_set():
+                break
 
 
 def run_adversarial_trial(iteration_size,selected_attack,selected_model,trial_hyperparameters,counter):

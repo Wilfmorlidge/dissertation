@@ -49,7 +49,7 @@ def scroll_list(root,display_width, display_height ,entry_height, dictionary, va
     list_frame.after(1000,lambda: callback_exception_frame(list_frame,tk.Frame(list_frame,height=1, highlightbackground='dimgray', bg='dimgray',name='exception_frame'),display_height,0))
 
     # this finalises the geoemtry manager positions for the objects
-    object_container.pack(side='left',expand=True)
+    object_container.pack(side='top',expand=True)
     canvas.pack(side = 'left')
     scrollbar.pack(side = 'left', fill='y')
     object_container.update_idletasks()
