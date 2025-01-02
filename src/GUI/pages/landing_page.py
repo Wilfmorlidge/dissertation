@@ -14,6 +14,9 @@ def create_hyperparameter_list(right_frame,selected_attack,root,previous_selecte
     #this is a self calling function which runs in a child thread and watches for changes in the attack selection
 
     #this if statements makes sure nothing happens when the attack has not been changed since the last run of this function
+    #print(selected_attack)
+    #print(previous_selected_attack)
+    #print("--------------------------")
     if (selected_attack[0] != previous_selected_attack[0]):
         # where the attack has changed the current hyeprparameter list is deleted
         for widget in right_frame.winfo_children():
@@ -31,6 +34,11 @@ def create_hyperparameter_list(right_frame,selected_attack,root,previous_selecte
     root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack,hyperparameter_settings))
 
 
+def continue_button_activity_check(root,continue_button,selected_model,selected_attack):
+    if selected_model != [None] and selected_attack != [None]:
+        continue_button.config(state=tk.NORMAL,bg='gray95')
+    root.after(100, lambda: continue_button_activity_check(root,continue_button,selected_model,selected_attack))
+
 def move_to_output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number):
     print(selected_attack)
     print(selected_model)
@@ -39,18 +47,18 @@ def move_to_output_page(root,selected_attack,selected_model,hyperparameter_setti
 
     from GUI.pages.output_page import output_page
 
-    if (selected_attack != [None]) and (selected_model != [None]):
+    #if (selected_attack != [None]) and (selected_model != [None]):
     #this resolves the values of the hyperparameter_settings text fields into actual float values for the hyperparameters.
-        for i in range(len(hyperparameter_settings)):
-            # this gets the value in text field i and converts it into a list of floats (under the assumption that the entry to the field is in csv float format)
-            # then splits the string into substrings via commas and converts the substrings to floats
-            value = hyperparameter_settings[i].get(0.0,'end')
-            if value.strip() == "":
-                hyperparameter_settings[i] = []
-            else:
-                hyperparameter_settings[i] = [float(x) for x in value.split(',')]
-        print(hyperparameter_settings)
-        output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number)
+    for i in range(len(hyperparameter_settings)):
+        # this gets the value in text field i and converts it into a list of floats (under the assumption that the entry to the field is in csv float format)
+        # then splits the string into substrings via commas and converts the substrings to floats
+        value = hyperparameter_settings[i].get(0.0,'end')
+        if value.strip() == "":
+            hyperparameter_settings[i] = []
+        else:
+            hyperparameter_settings[i] = [float(x) for x in value.split(',')]
+    print(hyperparameter_settings)
+    output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number)
 
 def landing_page(root):
 
@@ -61,35 +69,62 @@ def landing_page(root):
     selected_model = [None]
     hyperparameter_settings = []
 
-    top_frame = tk.Frame(root, bg="dimgray", highlightthickness=2, highlightbackground='black', height=200)
-    top_frame.pack(side = 'top',fill = tk.X)
     bottom_frame = tk.Frame(root, bg="dimgray", height=200)
     bottom_frame.pack(side = 'top',fill='both', expand=(True))
 
     # this section defines the bottom left frame and the attack list
-    left_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
-    scroll_list(left_frame,display_width=200,display_height=300,entry_height=10, dictionary = attack_dictionary, variable = selected_attack, entry_function = single_input_scroll_list_entries)
+    left_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black', width = 500)
+    left_list_label_pair_container = tk.Frame(left_frame, bg='dimgray')
+    left_label = tk.Label(left_list_label_pair_container,text='attacks:',bg='dimgray',font=('helvetica',22))
+    left_label.pack(side = 'top',fill='x', expand=(True),pady=(0,50))
+    scroll_list(left_list_label_pair_container,display_width=200,display_height=400,entry_height=2, dictionary = attack_dictionary, variable = selected_attack, entry_function = single_input_scroll_list_entries)
+    left_list_label_pair_container.pack(side='top',expand=True,pady =(0,50))
     left_frame.pack(side = 'left',fill='both', expand=(True))
 
     # this section defines the bottom middle frame and the model list
-    middle_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
-    scroll_list(middle_frame,display_width=100,display_height=200,entry_height=5, dictionary =  model_dictionary, variable = selected_model, entry_function = single_input_scroll_list_entries)
+    middle_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black', width = 500)
+    middle_list_label_pair_container = tk.Frame(middle_frame, bg='dimgray')
+    middle_label = tk.Label(middle_list_label_pair_container,text='models:',bg='dimgray',font=('helvetica',22))
+    middle_label.pack(side = 'top',fill='x', expand=(True),pady=(0,50))
+    scroll_list(middle_list_label_pair_container,display_width=200,display_height=400,entry_height=2, dictionary =  model_dictionary, variable = selected_model, entry_function = single_input_scroll_list_entries)
+    middle_list_label_pair_container.pack(side='top',expand=True,pady =(0,50))
     middle_frame.pack(side = 'left',fill='both', expand=(True))
 
 
     # this section defines the bottom right frame and the parameter setting form
-    right_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black')
+    right_frame = tk.Frame(bottom_frame, bg="dimgray", highlightthickness=2, highlightbackground='black', width = 500)
     iteration_size = tk.DoubleVar()
     iteration_number = tk.DoubleVar()
-    iteration_size_scale = tk.Scale(right_frame,orient='horizontal',from_=5,to=100,variable=iteration_size)
-    iteration_number_scale = tk.Scale(right_frame,orient='horizontal',from_=1,to=10,variable=iteration_number)
-    continue_button = tk.Button(right_frame,text = 'continue',command = lambda: move_to_output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number))
+    iteration_size_scale_container = tk.Frame(right_frame, bg = 'dimgray')
+    iteration_size_label = tk.Label(iteration_size_scale_container,text='images per iteration:',bg='dimgray',font=('helvetica',14),anchor='w',justify='left')
+    iteration_size_scale = tk.Scale(iteration_size_scale_container,orient='horizontal',from_=5,to=250,variable=iteration_size, width = 10, length = 400)
+
+    iteration_size_label.pack(side='top',expand=True,pady =(0,10))
+    iteration_size_scale.pack(side='top')
+
+    iteration_number_scale_container = tk.Frame(right_frame, bg = 'dimgray')
+    iteration_number_label = tk.Label(iteration_number_scale_container,text='number of iterations:',bg='dimgray',font=('helvetica',14),anchor='w',justify='left')
+    iteration_number_scale = tk.Scale(iteration_number_scale_container,orient='horizontal',from_=5,to=25,variable=iteration_number, width = 10, length = 400)
+
+    iteration_number_label.pack(side='top',expand=True,pady =(0,10))
+    iteration_number_scale.pack(side='top')
+
+
+
+    #right_list_label_pair_container = tk.Frame(right_frame, bg='dimgray')
+    right_label = tk.Label(right_frame,text='hyperparameter settings:',bg='dimgray',font=('helvetica',22))
+    continue_button = tk.Button(right_frame,text = 'continue',command = lambda: move_to_output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number), bg = 'gray30', state = tk.DISABLED)
 
     # this section creates a callback loop which renders the hyperparameter list only when a valid attack has been chosen.
     root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,[None],hyperparameter_settings))
 
-    iteration_size_scale.pack(side='top',pady=(10,0))
-    iteration_number_scale.pack(side='top',pady=(10,0))
-    continue_button.pack(side='bottom')
+    # this section calls back to check whether the continue button should appear disabled
+
+    root.after(100,lambda: continue_button_activity_check(root,continue_button,selected_model,selected_attack))
+
+    iteration_size_scale_container.pack(side='top',pady=(10,0))
+    iteration_number_scale_container.pack(side='top',pady=(100,0))
+    right_label.pack(side = 'top',pady=(50,0))
+    continue_button.pack(side='bottom', pady=(0,50))
     right_frame.pack(side = 'left',fill='both', expand=(True))
 

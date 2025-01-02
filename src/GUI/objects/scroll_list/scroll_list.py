@@ -54,3 +54,5 @@ def scroll_list(root,display_width, display_height ,entry_height, dictionary, va
     scrollbar.pack(side = 'left', fill='y')
     object_container.update_idletasks()
     canvas.yview_moveto(0)
+
+    return object_container
