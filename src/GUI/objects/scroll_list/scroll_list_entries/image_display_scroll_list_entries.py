@@ -12,7 +12,7 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
                 file_count += 1
 
         for counter in range(0,file_count):
-            container_container = tk.Frame(root)
+            container_container = tk.Frame(root,bg='dimgray')
 
 
             listing_container = tk.Frame(container_container, height = int(entry_height * 1/5))
@@ -21,19 +21,19 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
             image_container = tk.Frame(container_container, height = int(entry_height * 4/5))
 
             unpertubed_image = Image.open( f"./results/trial_{current_trial}/unpertubed/image_{counter}.png")
-            unpertubed_image = unpertubed_image.resize((int(display_width/3),int(entry_height * 4/5)))
+            unpertubed_image = unpertubed_image.resize((int(display_width/3) -30,int(entry_height * 4/5)-30))
             unpertubed_image = ImageTk.PhotoImage(unpertubed_image)
             unpertubed_label = tk.Label(image_container,image = unpertubed_image)
             unpertubed_label.image = unpertubed_image
 
             pertubation_image = Image.open( f"./results/trial_{current_trial}/pertubation/image_{counter}.png")
-            pertubation_image = pertubation_image.resize((int(display_width/3),int(entry_height * 4/5)))
+            pertubation_image = pertubation_image.resize((int(display_width/3) -30,int(entry_height * 4/5)-30))
             pertubation_image = ImageTk.PhotoImage(pertubation_image)
             pertubation_label = tk.Label(image_container,image = pertubation_image)
             pertubation_label.image = pertubation_image
 
             pertubed_image = Image.open( f"./results/trial_{current_trial}/pertubed/image_{counter}.png")
-            pertubed_image = pertubed_image.resize((int(display_width/3),int(entry_height * 4/5)))
+            pertubed_image = pertubed_image.resize((int(display_width/3)-30,int(entry_height * 4/5)-30))
             pertubed_image = ImageTk.PhotoImage(pertubed_image)
             pertubed_label = tk.Label(image_container,image = pertubed_image)
             pertubed_label.image = pertubed_image
@@ -41,24 +41,10 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
             listing.pack(side='left')
             listing_container.pack(side='top',fill='x', expand=(True))
            
-            unpertubed_label.pack(side = 'left')
-            pertubation_label.pack(side = 'left')
-            pertubed_label.pack(side = 'left')
-            image_container.pack(side = 'top',fill='x', expand=(True))
-
-            container_container.pack(side='top',fill='x', expand=(True))
-
-        #total_height = 0
-        #extension_frame = None
-        #for widget in root.winfo_children():
-        #    if widget.winfo_name() == 'exception_frame':
-        #        extension_frame = widget
-        #    else:
-        #        total_height += widget.winfo_height()
-        #    widget.update_idletasks()  # Ensure the widget's geometry is updated
-        #if extension_frame != None:
-        #    extension_frame.pack_forget()  # Remove the widget from its current packing
-        #    extension_frame.pack(side='bottom', fill='x',pady=(0,(max((display_height-total_height),0))))  # Re-pack it at the bottom
+            unpertubed_label.pack(side = 'left',padx=(10,0),pady=(22.5,22.5))
+            pertubation_label.pack(side = 'left',padx=(5,5),pady=(22.5,22.5))
+            pertubed_label.pack(side = 'left',padx=(0,10),pady=(22.5,22.5))
+            image_container.pack(side = 'top')
+            container_container.pack(side='top',expand=True,fill='x',pady=(0,30),padx=(22.5,22.5))
     
     root.after(500, lambda: update_image_display_entries(root,display_width,entry_height,dictionary, variable,display_height))
-1

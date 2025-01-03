@@ -27,18 +27,22 @@ def progress_bar(root, object_height, object_width, iteration_number, progress_b
 
 
         if completion_flag == 0:
-            title = tk.Label(object_container,text=f"Running trials ({progress + 1}|{iteration_number})")
+            title = tk.Label(object_container,text=f"Running trials ({progress + 1}|{iteration_number})",bg='dimgray',font=('Helvetica',26))
         else: 
-            title = tk.Label(object_container,text=f"trials complete")
+            title = tk.Label(object_container,text=f"trials complete",bg='dimgray',font=('Helvetica',26))
 
-        progress_bar = ttk.Progressbar(object_container,orient='horizontal',mode='determinate',length=object_width)
+        s = ttk.Style()
+        s.theme_use('classic')
+        s.configure("red.Horizontal.TProgressbar", background='black', throughcolor='lightblue1')
+
+        progress_bar = ttk.Progressbar(object_container,orient='horizontal',mode='determinate',length=object_width,style="red.Horizontal.TProgressbar")
 
         progress_bar['value'] = ((progress/iteration_number) * 100)
 
         if completion_flag == 0:
-            sub_title = tk.Label(object_container,text=f" current elapsed time : {current_time - start_time}", name = 'sub_title')
+            sub_title = tk.Label(object_container,text=f" current elapsed time : {current_time - start_time}", name = 'sub_title',bg='dimgray',font=('Helvetica',14))
         else:
-            sub_title = tk.Label(object_container,text=f"total elapsed time : {start_time}", name = 'sub_title')
+            sub_title = tk.Label(object_container,text=f"total elapsed time : {start_time}", name = 'sub_title',bg='dimgray',font=('Helvetica',14))
 
         title.pack(side = 'top',fill='x', expand=(True))
         progress_bar.pack(side = 'top',fill='x', expand=(True))

@@ -35,5 +35,5 @@ def single_input_scroll_list_entries(root,display_width,entry_height,dictionary,
         buttons.append((Button,key))
         if interactive == False:
             Button.config(state=tk.DISABLED)
-        Button.pack(side = 'top',fill='x', expand=(True))
+        Button.pack(side = 'top',fill='x', expand=(True),pady=(0,5))
     root.update_idletasks()

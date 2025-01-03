@@ -37,6 +37,8 @@ def create_hyperparameter_list(right_frame,selected_attack,root,previous_selecte
 def continue_button_activity_check(root,continue_button,selected_model,selected_attack):
     if selected_model != [None] and selected_attack != [None]:
         continue_button.config(state=tk.NORMAL,bg='gray95')
+    else: 
+        continue_button.config(state=tk.DISABLED,bg='gray30')
     root.after(100, lambda: continue_button_activity_check(root,continue_button,selected_model,selected_attack))
 
 def move_to_output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number):
@@ -97,14 +99,14 @@ def landing_page(root):
     iteration_number = tk.DoubleVar()
     iteration_size_scale_container = tk.Frame(right_frame, bg = 'dimgray')
     iteration_size_label = tk.Label(iteration_size_scale_container,text='images per iteration:',bg='dimgray',font=('helvetica',14),anchor='w',justify='left')
-    iteration_size_scale = tk.Scale(iteration_size_scale_container,orient='horizontal',from_=5,to=250,variable=iteration_size, width = 10, length = 400)
+    iteration_size_scale = tk.Scale(iteration_size_scale_container,orient='horizontal',from_=5,to=250,variable=iteration_size, width = 25, length = 400, bg='dimgray', highlightbackground='dimgray')
 
     iteration_size_label.pack(side='top',expand=True,pady =(0,10))
     iteration_size_scale.pack(side='top')
 
     iteration_number_scale_container = tk.Frame(right_frame, bg = 'dimgray')
     iteration_number_label = tk.Label(iteration_number_scale_container,text='number of iterations:',bg='dimgray',font=('helvetica',14),anchor='w',justify='left')
-    iteration_number_scale = tk.Scale(iteration_number_scale_container,orient='horizontal',from_=5,to=25,variable=iteration_number, width = 10, length = 400)
+    iteration_number_scale = tk.Scale(iteration_number_scale_container,orient='horizontal',from_=1,to=25,variable=iteration_number, width = 25, length = 400,bg='dimgray', highlightbackground='dimgray')
 
     iteration_number_label.pack(side='top',expand=True,pady =(0,10))
     iteration_number_scale.pack(side='top')
@@ -125,6 +127,6 @@ def landing_page(root):
     iteration_size_scale_container.pack(side='top',pady=(10,0))
     iteration_number_scale_container.pack(side='top',pady=(100,0))
     right_label.pack(side = 'top',pady=(50,0))
-    continue_button.pack(side='bottom', pady=(0,50))
+    continue_button.pack(side='bottom', pady=(15,35))
     right_frame.pack(side = 'left',fill='both', expand=(True))
 

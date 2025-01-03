@@ -5,10 +5,10 @@ import tkinter as tk
 
 def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dictionary, variable, display_height):
 
-    accuracy_frame = tk.Frame(list_frame,height = entry_height, width = display_width)
-    mean_pertubation_frame = tk.Frame(list_frame,height = entry_height, width = display_width)
-    GMQ_frame = tk.Frame(list_frame,height = entry_height, width = display_width)
-    Sharpe_ratio_frame = tk.Frame(list_frame,height = entry_height, width = display_width)
+    accuracy_frame = tk.Frame(list_frame,height = entry_height, width = display_width,bg='dimgray', highlightbackground='dimgray')
+    mean_pertubation_frame = tk.Frame(list_frame,height = entry_height, width = display_width,bg='dimgray', highlightbackground='dimgray')
+    GMQ_frame = tk.Frame(list_frame,height = entry_height, width = display_width,bg='dimgray', highlightbackground='dimgray')
+    Sharpe_ratio_frame = tk.Frame(list_frame,height = entry_height, width = display_width,bg='dimgray', highlightbackground='dimgray')
 
 
     def update_graph_frames(list_frame,display_width,entry_height, dictionary, variable, display_height,accuracy_frame,mean_pertubation_frame,GMQ_frame,Sharpe_ratio_frame):
@@ -48,10 +48,10 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
 
             canvas = FigureCanvasTkAgg(fig, master=accuracy_frame)
             canvas.draw()
-            accuracy_label.pack(side='top')
+            accuracy_label.pack(side='top',fill='both')
             canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
     
-            accuracy_frame.pack(side='top', fill='both', expand=True)
+            accuracy_frame.pack(side='top', fill='both', expand=True,padx=(0,15),pady=(0,15))
 
             for widget in mean_pertubation_frame.winfo_children():
                 widget.destroy()
@@ -68,10 +68,10 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
 
             canvas = FigureCanvasTkAgg(fig, master=mean_pertubation_frame)
             canvas.draw()
-            mean_pertubation_label.pack(side='top')
+            mean_pertubation_label.pack(side='top',fill='both')
             canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
     
-            mean_pertubation_frame.pack(side='top', fill='both', expand=True)
+            mean_pertubation_frame.pack(side='top', fill='both', expand=True,padx=(0,15),pady=(0,15))
 
             for widget in GMQ_frame.winfo_children():
                 widget.destroy()
@@ -88,10 +88,10 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
 
             canvas = FigureCanvasTkAgg(fig, master=GMQ_frame)
             canvas.draw()
-            GMQ_label.pack(side='top')
+            GMQ_label.pack(side='top',fill='both')
             canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
     
-            GMQ_frame.pack(side='top', fill='both', expand=True)
+            GMQ_frame.pack(side='top', fill='both', expand=True,padx=(0,15),pady=(0,15))
 
             for widget in Sharpe_ratio_frame.winfo_children():
                 widget.destroy()
@@ -108,10 +108,10 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
 
             canvas = FigureCanvasTkAgg(fig, master=Sharpe_ratio_frame)
             canvas.draw()
-            Sharpe_ratio_label.pack(side='top')
+            Sharpe_ratio_label.pack(side='top',fill='both')
             canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
     
-            Sharpe_ratio_frame.pack(side='top', fill='both', expand=True)
+            Sharpe_ratio_frame.pack(side='top', fill='both', expand=True,padx=(0,15))
 
         list_frame.after(500, lambda: update_graph_frames(list_frame,display_width,entry_height, dictionary, variable, display_height,accuracy_frame,mean_pertubation_frame,GMQ_frame,Sharpe_ratio_frame))
 
