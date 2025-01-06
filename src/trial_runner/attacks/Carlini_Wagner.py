@@ -18,7 +18,7 @@ def calculate_class_term_derivative(image,model,learning_rate,target_class,k):
         k = tf.constant([k])
         with tf.GradientTape() as watcher:
             watcher.watch(image)
-            scores = model(image)
+            scores = model(tf.convert_to_tensor(image, dtype=tf.float64))
             retrieved_logit = scores[:1,target_class]
             if target_class == 0:
                 filtered_scores = scores[:,1:]

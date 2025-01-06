@@ -10,7 +10,7 @@ def find_logit_derivative_value(image,logit,model):
         watcher.watch(image)
         #all calculations occuring in here are recorded by gradient tape, which allows the gradient of a valeu calculated in this indent to be automatically calculated
         #with respect to a value passed into this indent.
-        scores = model(image)
+        scores = model(tf.convert_to_tensor(image, dtype=tf.float64))
         retrieved_logit = scores[:1,logit]
     return np.array(watcher.gradient(retrieved_logit,image))
 
