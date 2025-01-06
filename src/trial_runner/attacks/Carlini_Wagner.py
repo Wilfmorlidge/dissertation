@@ -68,7 +68,7 @@ def Carlini_Wagner_iteration_step(image,classification,model, class_list, learni
        
         # this section checks if hyperparameters are undefined and sets them to default
         if learning_rate == None:
-             learning_rate = 10000.0
+             learning_rate = 100.0
         if starting_points == None:
             starting_points = 1.0
         if temperature == None:
