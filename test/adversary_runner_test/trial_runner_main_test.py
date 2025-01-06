@@ -139,6 +139,9 @@ class trial_runner_main_tests(unittest.TestCase):
             shutil.rmtree('./results')
         back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_model,hyperparameter_settings,image_queue,graph_queue,progress_bar_queue,thread_killing_event)
         self.assertTrue(os.path.isfile('./results/cumulative_metrics.txt'))
+        
+        if os.path.exists('./results'):
+            shutil.rmtree('./results')
 
 
     @patch('trial_runner.trial_runner_main.update_cumulative_metrics')

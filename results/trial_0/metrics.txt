@@ -1,0 +1,1 @@
+{'confidences': [0.14476486, 0.14476486], 'classes': [111, 111], 'accuracy': 0.0, 'GMQ': 0.07238242775201797, 'mean_pertubation': 0.0}

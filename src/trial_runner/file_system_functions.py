@@ -63,8 +63,7 @@ def update_cumulative_metrics(counter,iteration_size):
 
 
 
-def append_images(database,inner_counter, outer_counter,directory_string):
-    os.makedirs(directory_string, exist_ok=True)
+def append_images(database,inner_counter,directory_string):
     os.makedirs(f'{directory_string}/unpertubed', exist_ok=True)
     os.makedirs(f'{directory_string}/pertubation', exist_ok=True)
     os.makedirs(f'{directory_string}/pertubed', exist_ok=True)
@@ -109,6 +108,8 @@ def normalize_database(unnormalised_database,length,model_string,class_list, inf
 
 def calculate_output_data(database,model,outer_counter):
 
+    
+    print('life is without meaning')
     scores = model.predict(np.array(database['pertubed_images']))
     # provide human readable results
     confidences = []
@@ -117,8 +118,9 @@ def calculate_output_data(database,model,outer_counter):
     misplaceed_confidence_sum = 0
     pertubation_sum = 0
     directory_string = f'./results/trial_{outer_counter}'
+    os.makedirs(directory_string, exist_ok=True)
     for inner_counter in range(0,len(scores)):
-        append_images(database,inner_counter,outer_counter,directory_string)
+        append_images(database,inner_counter,directory_string)
         confidences.append(np.max(scores[inner_counter]))
         this_class = np.argmax(scores[inner_counter])
         pertubation_sum += np.linalg.norm(database['pertubed_images'][inner_counter]-database['unpertubed_images'][inner_counter])
@@ -141,11 +143,14 @@ def calculate_output_data(database,model,outer_counter):
 
     }
 
+    print('this is the dictionary' + str(dictionary))
+
     # this section writes the calculated metrics for the trial to a file
     # so that they can be stored persistently.
     with open(f'{directory_string}/metrics.txt', "w") as file:
         file.write(str(dictionary))
 
+    print('yee')
 
 
 
