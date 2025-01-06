@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import tensorflow_datasets as tfds
-from trial_runner.network_functions import normalize_database,calculate_output_data, update_cumulative_metrics
+from trial_runner.file_system_functions import normalize_database,calculate_output_data, update_cumulative_metrics
 #from definitions import initialize_model, load_dataset
 from trial_runner.adversary_handler import generate_pertubations
 import itertools

@@ -14,7 +14,7 @@ database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_fi
 # adding Folder_2 to the system path
 sys.path.insert(0, './src')
 
-from trial_runner.network_functions import resize_image, normalize_database, calculate_output_data, denormalize_and_save_image
+from trial_runner.file_system_functions import resize_image, normalize_database, calculate_output_data, denormalize_and_save_image
 
 class BasicNetworkTests(unittest.TestCase):
     #test that the resize function performs as expected
