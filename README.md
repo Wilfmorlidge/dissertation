@@ -31,7 +31,9 @@ for ease of use it is recommended to use visual studio code when loading this pr
    if you have conda-forge or else by adding your existing cuda and cudatoolkit installs to the environment variables for your conda environment (found in its
    activation script)
 
-5) verify cuda by checking that running nvcc --version returns your cuda version, then run trial_runner_main on its own to ensure tensorflow has discoverd
+5) install the master_dictionary_refactor_branch branch of this project
+
+6) verify cuda by checking that running nvcc --version returns your cuda version, then run trial_runner_main on its own to ensure tensorflow has discoverd
     your GPU, if tensorflow has not discoverd your GPU then follow these instructions: https://medium.com/analytics-vidhya/solution-to-tensorflow-2-not-using-gpu-119fb3e04daa
 
 running:
