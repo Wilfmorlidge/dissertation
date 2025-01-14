@@ -3,8 +3,10 @@ import tkinter as tk
 from PIL import Image, ImageTk
 
 def update_image_display_entries(root,display_width,entry_height,dictionary, variable, display_height):
+    print('this is stupid')
     while not dictionary.empty():
         current_trial = dictionary.get()
+        print('this is the current dictionary' + str(current_trial))
         file_count = 0
         for entry in os.listdir( f"./results/trial_{current_trial}/pertubed"):
             # Check if the entry is a file
@@ -12,13 +14,15 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
                 file_count += 1
 
         for counter in range(0,file_count):
-            container_container = tk.Frame(root,bg='dimgray')
+            container_container = tk.Frame(root,bg='dimgray',name='container_container')
 
 
-            listing_container = tk.Frame(container_container, height = int(entry_height * 1/5))
+            listing_container = tk.Frame(container_container, height = int(entry_height * 1/5),name='listing_container')
             listing = tk.Label(listing_container,text=f"{current_trial}:{counter}")
 
-            image_container = tk.Frame(container_container, height = int(entry_height * 4/5))
+            print('all is death plague and rot')
+
+            image_container = tk.Frame(container_container, height = int(entry_height * 4/5),name='image_container')
 
             unpertubed_image = Image.open( f"./results/trial_{current_trial}/unpertubed/image_{counter}.png")
             unpertubed_image = unpertubed_image.resize((int(display_width/3) -30,int(entry_height * 4/5)-30))

@@ -10,18 +10,14 @@ def callback_exception_frame(list_frame,exception_frame,display_object,total_hei
             exception_frame = widget
         else:
             current_total_height += widget.winfo_height()
-            print('prior to pad checking this is the height' + str(current_total_height))
             try:
                 pady = widget.pack_info().get('pady', 0)
             except:
                 pady = 0 
-            print('this is the y padding for this widget' + str(pady))
             if isinstance(pady, tuple):
                 current_total_height += sum(pady)  # Add both top and bottom padding
-                print('after pad checking this is the height' + str(current_total_height))
             else:
                 current_total_height += pady
-                print('after pad checking this is the height' + str(current_total_height))
     if total_height != current_total_height:
         widget.update_idletasks()  # Ensure the widget's geometry is updated
         exception_frame.pack_forget()  # Remove the widget from its current packing
