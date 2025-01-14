@@ -33,115 +33,60 @@ class multi_input_scroll_list_entries_test(unittest.TestCase):
         for widget in container.winfo_children():
             if isinstance(widget, tk.Frame):
                 matching_title = -1
-                instances_of_sub_widgets = (0,0)
+                instances_of_sub_widgets = [0,0]
                 for widget1 in widget.winfo_children():
                     if isinstance(widget1, tk.Label):
-                        instances_of_sub_widgets[0] += 1
-                        for counter in range (0,(len(expected_button_titles)-1)):
-                            if expected_button_titles[counter] == widget1.cget("text"):
-                                del expected_button_titles[counter]
+                        instances_of_sub_widgets[0] = instances_of_sub_widgets[0] + 1
+                        remove = False
+                        for entry in expected_button_titles:
+                            if entry == widget1.cget("text"):
+                                remove = True
+                        if remove == True:
+                            expected_button_titles.remove(widget1.cget("text"))
                     if isinstance(widget1, tk.Text):
-                        instances_of_sub_widgets[1] += 1
-                if instances_of_sub_widgets != (1,1):
+                        instances_of_sub_widgets[1] = instances_of_sub_widgets[1] + 1
+                if instances_of_sub_widgets != [1,1]:
                     fail_flag = 1
 
         self.assertEqual(expected_button_titles,[])
         self.assertEqual(fail_flag, 0)
 
                         
+    def test_typeing_in_a_field_updates_its_value(self):
+        root = tk.Tk()
+        container = tk.Frame(root)
+        display_width = 200
+        entry_height = 100
+        dictionary = {'fake_data_1':1}
+        variable = []
+        display_height = 500
+        multi_input_scroll_list_entries(container,display_width,entry_height,dictionary, variable,display_height)
 
-   # def test_clicking_a_button_changes_the_value_of_variable(self):
-    #    root = tk.Tk()
-     #   container = tk.Frame(root)
-      #  display_width = 200
-       # entry_height = 100
-        #dictionary = {'fake_data_1':1}
-        #variable = [None]
-        #display_height = 500
-        #single_input_scroll_list_entries(container,display_width,entry_height,dictionary, variable,display_height)
+        container.pack(side='top',pady=(10,0))
 
-       # container.pack(side='top',pady=(10,0))
+        root.update_idletasks()
+        root.update()
 
-        #root.update_idletasks()
-        #root.update()
+        for widget in container.winfo_children():
+            if (isinstance(widget, tk.Frame)):
+                for widget1 in widget.winfo_children():
+                    if (isinstance(widget1,tk.Text)):
+                        for char in "0.11,8.999,8.81,9.99,1.19,7.25,3":
+                            widget1.insert(tk.END, char)
+                            widget1.event_generate("<<TextModified>>", when="tail")
 
-      #  for widget in container.winfo_children():
-       #     if ((isinstance(widget, tk.Button)) and (widget.cget("text")=='fake_data_1')):
-        #        widget.invoke()
+        root.update_idletasks()
+        root.update()
 
-#        root.update_idletasks()
- #       root.update()
+        value = variable[0].get(0.0,'end')
 
-  #      self.assertEqual(variable,['fake_data_1',1])
-
-   # def test_clicking_two_buttons_in_succession_leaves_the_value_of_variable_with_the_second_button(self):
-    #    root = tk.Tk()
-     #   container = tk.Frame(root)
-      #  display_width = 200
-       # entry_height = 100
-       # dictionary = {'fake_data_1':1,'fake_data_2': 2}
-       # variable = [None]
-      #  display_height = 500
-      #  single_input_scroll_list_entries(container,display_width,entry_height,dictionary, variable,display_height)
-
-#        container.pack(side='top',pady=(10,0))
-
- #       root.update_idletasks()
-  #      root.update()
+        self.assertEqual(value,"0.11,8.999,8.81,9.99,1.19,7.25,3\n")
 
 
-   #     for widget in container.winfo_children():
-    #        if ((isinstance(widget, tk.Button)) and (widget.cget("text")=='fake_data_1')):
-     #           widget.invoke()
-
-      #  root.update_idletasks()
-       # root.update()
-
-        #for widget in container.winfo_children():
-         #   if ((isinstance(widget, tk.Button)) and (widget.cget("text")=='fake_data_2')):
-          #      widget.invoke()
-
-       # root.update_idletasks()
-       # root.update()
 
 
-        #self.assertEqual(variable,['fake_data_2',2])
-
-    #def test_clicking_the_same_button_twice_resets_the_value_of_variable(self):
-     #   root = tk.Tk()
-      #  container = tk.Frame(root)
-       # display_width = 200
-       # entry_height = 100
-       # dictionary = {'fake_data_1':1}
-       # variable = [None]
-       # display_height = 500
-       # single_input_scroll_list_entries(container,display_width,entry_height,dictionary, variable,display_height)
-
-        #container.pack(side='top',pady=(10,0))
-
-       # root.update_idletasks()
-       # root.update()
 
 
-       # for widget in container.winfo_children():
-       #     if ((isinstance(widget, tk.Button)) and (widget.cget("text")=='fake_data_1')):
-       #         widget.invoke()
-#
- #       root.update_idletasks()
-  #      root.update()
-
-        
-   #     self.assertEqual(variable,['fake_data_1',1])
-
-    #    for widget in container.winfo_children():
-     #       if ((isinstance(widget, tk.Button)) and (widget.cget("text")=='fake_data_1')):
-      #          widget.invoke()
-
-       # root.update_idletasks()
-        #root.update()
-
-
-        #self.assertEqual(variable,[None])
 
 
 
