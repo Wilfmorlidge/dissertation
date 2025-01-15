@@ -192,7 +192,10 @@ class multi_input_scroll_list_entries_test(unittest.TestCase):
                                     fail_flag = True
                     
                     elif isinstance(widget, tk.Frame) and widget1.winfo_name() == 'listing_container':
-                        nothing = None
+                        for widget2 in widget1.winfo_children():
+                            print('bread')
+                            if isinstance(widget2,tk.Label):
+                                print(widget2.cget("text"))
                     else:
                         print('hellfire and damnation')
                         fail_flag = True
