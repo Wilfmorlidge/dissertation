@@ -35,6 +35,8 @@ class single_input_scroll_list_entries_test(unittest.TestCase):
                     if expected_button_titles[counter] == widget.cget("text"):
                         matching_title = counter
                 del expected_button_titles[matching_title]
+
+        root.destroy()
         
         self.assertEqual(expected_button_titles,[])
 
@@ -61,6 +63,8 @@ class single_input_scroll_list_entries_test(unittest.TestCase):
 
         root.update_idletasks()
         root.update()
+
+        root.destroy()
 
         self.assertEqual(variable,['fake_data_1',1])
 
@@ -94,6 +98,7 @@ class single_input_scroll_list_entries_test(unittest.TestCase):
         root.update_idletasks()
         root.update()
 
+        root.destroy()
 
         self.assertEqual(variable,['fake_data_2',2])
 
@@ -130,8 +135,24 @@ class single_input_scroll_list_entries_test(unittest.TestCase):
         root.update_idletasks()
         root.update()
 
+        root.destroy()
 
         self.assertEqual(variable,[None])
+
+
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(single_input_scroll_list_entries_test('test_buttons_are_created_for_all_entries_in_the_dictionary'))
+    suite.addTest(single_input_scroll_list_entries_test('test_clicking_a_button_changes_the_value_of_variable'))
+    suite.addTest(single_input_scroll_list_entries_test('test_clicking_two_buttons_in_succession_leaves_the_value_of_variable_with_the_second_button'))
+    suite.addTest(single_input_scroll_list_entries_test('test_clicking_the_same_button_twice_resets_the_value_of_variable'))
+    return suite
+
+
+
+
+
 
 
 
@@ -141,4 +162,5 @@ class single_input_scroll_list_entries_test(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    runner = unittest.TextTestRunner()
+    runner.run(suite())

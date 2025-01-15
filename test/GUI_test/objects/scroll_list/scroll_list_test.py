@@ -56,6 +56,8 @@ class scroll_list_tests(unittest.TestCase):
         root.update_idletasks()
         root.update()
 
+        root.destroy()
+
         self.assertEqual(current_scroll_region_corner,new_scroll_region_corner)
 
     def test_exception_frame_adds_correct_padding(self):
@@ -89,6 +91,9 @@ class scroll_list_tests(unittest.TestCase):
                         for widget3 in widget2.winfo_children():
                             if widget3.winfo_name() == 'exception_frame':
                                 pady = widget3.pack_info().get('pady', 0)
+
+        root.destroy()
+
         self.assertEqual(pady,(0,94))
 
 
@@ -146,6 +151,9 @@ class scroll_list_tests(unittest.TestCase):
         root.update()
 
         pady = exception_frame.pack_info().get('pady', 0)
+
+        root.destroy()
+
         self.assertEqual(pady,(0,82))
 
 
@@ -196,7 +204,29 @@ class scroll_list_tests(unittest.TestCase):
         root.update_idletasks()
         root.update()
 
+
+        root.destroy()
+
         self.assertNotEqual(current_scroll_region_corner,new_scroll_region_corner)
+
+
+
+
+
+
+
+        
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(scroll_list_tests('test_scrolling_an_empty_list'))
+    suite.addTest(scroll_list_tests('test_exception_frame_adds_correct_padding'))
+    suite.addTest(scroll_list_tests('test_exception_frame_updates_correctly'))
+    suite.addTest(scroll_list_tests('test_scrolling_a_more_than_full_list'))
+    return suite
+
+
+
 
 
 
@@ -208,4 +238,5 @@ class scroll_list_tests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    runner = unittest.TextTestRunner()
+    runner.run(suite())

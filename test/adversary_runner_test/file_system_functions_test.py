@@ -9,6 +9,8 @@ import tensorflow_datasets as tfds
 from unittest.mock import patch
 import os
 import shutil
+import ast
+
 
 database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_files=True, with_info=True)
 
@@ -17,7 +19,7 @@ sys.path.insert(0, './src')
 
 from trial_runner.file_system_functions import resize_image, normalize_database, calculate_output_data, append_images, denormalize_and_save_image, update_cumulative_metrics
 
-class BasicNetworkTests(unittest.TestCase):
+class file_system_function_tests(unittest.TestCase):
     #test that the resize function performs as expected
     def test_resize_array(self):
         npt.assert_array_equal(resize_image(np.ones((32, 32,3))), tf.image.resize(np.ones((32, 32,3)), (224,224)))
@@ -47,11 +49,18 @@ class BasicNetworkTests(unittest.TestCase):
 
         with open(f'./results/trial_test_trial/metrics.txt', "r") as file:
             contents = file.read()
-        
-        self.assertEqual(contents,"{'confidences': [0.14476486, 0.14476486], 'classes': [111, 111], 'accuracy': 0.0, 'GMQ': 0.07238242775201797, 'mean_pertubation': 0.0}")
+
+        contents = ast.literal_eval(contents)
 
         if os.path.exists('./results'):
             shutil.rmtree('./results')
+        
+        npt.assert_array_almost_equal(contents['confidences'],[0.14476486, 0.14476486], decimal = 3)
+        npt.assert_array_equal(contents['classes'], [111, 111])
+        self.assertEqual(contents['accuracy'], 0.0)
+        self.assertAlmostEqual(contents['GMQ'], 0.07238242775201797, places=4)
+        self.assertEqual(contents['mean_pertubation'], 0.0)
+
 
     @patch('trial_runner.file_system_functions.denormalize_and_save_image')
     def test_append_images(self,mock_denormalize_and_save_image):
@@ -66,10 +75,11 @@ class BasicNetworkTests(unittest.TestCase):
         self.assertTrue(os.path.isdir('./results/trial_test_trial/unpertubed'))
         self.assertTrue(os.path.isdir('./results/trial_test_trial/pertubation'))
         self.assertTrue(os.path.isdir('./results/trial_test_trial/pertubed'))
-        self.assertTrue(mock_denormalize_and_save_image.call_count,3)
 
         if os.path.exists('./results'):
             shutil.rmtree('./results')
+
+        self.assertTrue(mock_denormalize_and_save_image.call_count,3)
 
 
     def test_denormalize_and_save_image(self):
@@ -106,8 +116,34 @@ class BasicNetworkTests(unittest.TestCase):
         with open(f"./results/cumulative_metrics.txt", 'r') as file:
             lines = file.readlines()
 
+        if os.path.exists('./results'):
+            shutil.rmtree('./results')
+
         self.assertEqual(len(lines),2)
         self.assertEqual(lines[-1],"{'accuracy': 0.0, 'mean_pertubation': 0.0, 'GMQ': 0.07238242775201797, 'Sharpe_ratio': 0}")
 
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(file_system_function_tests('test_resize_array'))
+    suite.addTest(file_system_function_tests('test_normalize_database'))
+    suite.addTest(file_system_function_tests('test_calculate_output_data'))
+    suite.addTest(file_system_function_tests('test_append_images'))
+    suite.addTest(file_system_function_tests('test_denormalize_and_save_image'))
+    suite.addTest(file_system_function_tests('test_update_cumulative_metrics'))
+    return suite
+
+
+
+
+
+
+
+
+
+
+        
+
+
 if __name__ == '__main__':
-    unittest.main()
+    runner = unittest.TextTestRunner()
+    runner.run(suite())

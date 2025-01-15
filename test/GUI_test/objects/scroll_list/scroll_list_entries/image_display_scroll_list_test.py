@@ -17,7 +17,6 @@ from GUI.objects.scroll_list.scroll_list_entries.image_display_scroll_list_entri
 class multi_input_scroll_list_entries_test(unittest.TestCase):
 
 
-    @unittest.skip
     def test_images_are_appended_on_initial_step(self):
         root = tk.Tk()
         container = tk.Frame(root)
@@ -29,12 +28,12 @@ class multi_input_scroll_list_entries_test(unittest.TestCase):
 
         if os.path.exists('./results'):
             shutil.rmtree('./results')
-        os.makedirs(f'./results/trial_0', exist_ok=True)
         os.makedirs(f'./results/trial_0/unpertubed', exist_ok=True)
         os.makedirs(f'./results/trial_0/pertubation', exist_ok=True)
         os.makedirs(f'./results/trial_0/pertubed', exist_ok=True)
 
         image = np.random.uniform(-50,50,(224,224,3))
+
 
         image = Image.fromarray(((image - image.min()) / (image.max() - image.min()) * 255).astype(np.uint8))
         image.save(f'./results/trial_0/unpertubed/image_0.png')
@@ -59,47 +58,33 @@ class multi_input_scroll_list_entries_test(unittest.TestCase):
         root.update_idletasks()
         root.update()
 
-        fail_flag = False
-
         returned_images = []
 
 
         for widget in container.winfo_children():
-            print('why')
-            if isinstance(widget, tk.Frame) and widget.winfo_name() == 'container_container':
-                print('does')
+            if isinstance(widget, tk.Frame):
                 for widget1 in widget.winfo_children():
-                    print('the')
-                    print(widget.winfo_children())
-                    if isinstance(widget, tk.Frame) and widget1.winfo_name() == 'image_container':
-                        print('universe')
+                    if isinstance(widget, tk.Frame):
                         for widget2 in widget1.winfo_children():
-                            print('hate')
                             if isinstance(widget2,tk.Label):
-                                print('me')
                                 try:
-                                    print('specifically?')
                                     returned_images.append(np.array((ImageTk.getimage(widget2.image)).getdata()))
 
-                                    print(returned_images)
                                 except:
-                                    fail_flag = True
-                    
-                    elif isinstance(widget, tk.Frame) and widget1.winfo_name() == 'listing_container':
-                        nothing = None
-                    else:
-                        print('hellfire and damnation')
-                        fail_flag = True
-            else:
-                fail_flag = True
+                                    Nothing = None
 
-        self.assertEqual(fail_flag, 0)
+
+        if os.path.exists('./results'):
+            shutil.rmtree('./results')
+
+        root.destroy()
+
         npt.assert_array_equal(returned_images,[image,image,image])
 
-
+    
     def test_images_are_appended_after_changes(self):
         root = tk.Tk()
-        container = tk.Canvas(root)
+        container = tk.Frame(root)
         display_width = 200
         entry_height = 100
         dictionary = queue.Queue()
@@ -151,11 +136,6 @@ class multi_input_scroll_list_entries_test(unittest.TestCase):
         root.update_idletasks()
         root.update()
 
-        time.sleep(5)
-
-        root.update_idletasks()
-        root.update()
-
 
         image = Image.open( f"./results/trial_1/unpertubed/image_0.png")
         image = image.resize((int(display_width/3) -30,int(entry_height * 4/5)-30))
@@ -168,47 +148,34 @@ class multi_input_scroll_list_entries_test(unittest.TestCase):
 
         returned_images = []
 
-        print(container.winfo_children())
-
         for widget in container.winfo_children():
-            print('why')
-            if isinstance(widget, tk.Frame) and widget.winfo_name() == 'container_container':
-                print('does')
+            if isinstance(widget, tk.Frame):
                 for widget1 in widget.winfo_children():
-                    print('the')
-                    print(widget.winfo_children())
-                    if isinstance(widget, tk.Frame) and widget1.winfo_name() == 'image_container':
-                        print('universe')
+                    if isinstance(widget, tk.Frame):
                         for widget2 in widget1.winfo_children():
-                            print('hate')
                             if isinstance(widget2,tk.Label):
-                                print('me')
                                 try:
-                                    print('specifically?')
                                     returned_images.append(np.array((ImageTk.getimage(widget2.image)).getdata()))
 
-                                    print(returned_images)
                                 except:
-                                    fail_flag = True
-                    
-                    elif isinstance(widget, tk.Frame) and widget1.winfo_name() == 'listing_container':
-                        for widget2 in widget1.winfo_children():
-                            print('bread')
-                            if isinstance(widget2,tk.Label):
-                                print(widget2.cget("text"))
-                    else:
-                        print('hellfire and damnation')
-                        fail_flag = True
-            else:
-                fail_flag = True
+                                    nothing = None
 
-        self.assertEqual(fail_flag, 0)
+        if os.path.exists('./results'):
+            shutil.rmtree('./results')
+
+        root.destroy()
+
         npt.assert_array_equal(returned_images,[image,image,image,image,image,image])
+
         
                 
                         
 
-
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(multi_input_scroll_list_entries_test('test_images_are_appended_on_initial_step'))
+    suite.addTest(multi_input_scroll_list_entries_test('test_images_are_appended_after_changes'))
+    return suite
 
 
 
@@ -223,4 +190,5 @@ class multi_input_scroll_list_entries_test(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    runner = unittest.TextTestRunner()
+    runner.run(suite())

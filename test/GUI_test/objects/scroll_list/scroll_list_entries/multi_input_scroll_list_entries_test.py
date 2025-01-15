@@ -49,6 +49,9 @@ class multi_input_scroll_list_entries_test(unittest.TestCase):
                 if instances_of_sub_widgets != [1,1]:
                     fail_flag = 1
 
+
+        root.destroy()
+
         self.assertEqual(expected_button_titles,[])
         self.assertEqual(fail_flag, 0)
 
@@ -81,6 +84,9 @@ class multi_input_scroll_list_entries_test(unittest.TestCase):
 
         value = variable[0].get(0.0,'end')
 
+
+        root.destroy()
+
         self.assertEqual(value,"0.11,8.999,8.81,9.99,1.19,7.25,3\n")
 
 
@@ -95,6 +101,24 @@ class multi_input_scroll_list_entries_test(unittest.TestCase):
 
         
 
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(multi_input_scroll_list_entries_test('test_buttons_are_created_for_all_entries_in_the_dictionary'))
+    suite.addTest(multi_input_scroll_list_entries_test('test_typeing_in_a_field_updates_its_value'))
+    return suite
+
+
+
+
+
+
+
+
+
+
+        
+
 
 if __name__ == '__main__':
-    unittest.main()
+    runner = unittest.TextTestRunner()
+    runner.run(suite())
