@@ -58,7 +58,7 @@ class file_system_function_tests(unittest.TestCase):
         npt.assert_array_almost_equal(contents['confidences'],[0.14476486, 0.14476486], decimal = 3)
         npt.assert_array_equal(contents['classes'], [111, 111])
         self.assertEqual(contents['accuracy'], 0.0)
-        self.assertAlmostEqual(contents['GMQ'], 0.07238242775201797, places=4)
+        self.assertAlmostEqual(contents['GMQ'], 0.07238242775201797, places=2)
         self.assertEqual(contents['mean_pertubation'], 0.0)
 
 

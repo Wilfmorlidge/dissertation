@@ -43,13 +43,13 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
             ax.plot(accuracy_points)
             ax.set_xlim(0, variable)  # Set x-axis limits
             fig.tight_layout()
-            print(fig)
-            print(ax)
 
             canvas = FigureCanvasTkAgg(fig, master=accuracy_frame)
             canvas.draw()
             accuracy_label.pack(side='top',fill='both')
             canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
+            accuracy_label.metadata = {'y_data':(ax.lines)[0].get_ydata()}
+
     
             accuracy_frame.pack(side='top', fill='both', expand=True,padx=(0,15),pady=(0,15))
 
@@ -63,13 +63,14 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
             ax.plot(mean_pertubation_points)
             ax.set_xlim(0, variable)  # Set x-axis limits
             fig.tight_layout()
-            print(fig)
-            print(ax)
+
+
 
             canvas = FigureCanvasTkAgg(fig, master=mean_pertubation_frame)
             canvas.draw()
             mean_pertubation_label.pack(side='top',fill='both')
             canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
+            mean_pertubation_label.metadata = {'y_data':(ax.lines)[0].get_ydata()}
     
             mean_pertubation_frame.pack(side='top', fill='both', expand=True,padx=(0,15),pady=(0,15))
 
@@ -83,13 +84,13 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
             ax.plot(GMQ_points)
             ax.set_xlim(0, variable)  # Set x-axis limits
             fig.tight_layout()
-            print(fig)
-            print(ax)
+            print((ax.lines)[0].get_ydata())
 
             canvas = FigureCanvasTkAgg(fig, master=GMQ_frame)
             canvas.draw()
             GMQ_label.pack(side='top',fill='both')
             canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
+            GMQ_label.metadata = {'y_data':(ax.lines)[0].get_ydata()}
     
             GMQ_frame.pack(side='top', fill='both', expand=True,padx=(0,15),pady=(0,15))
 
@@ -103,13 +104,13 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
             ax.plot(Sharpe_ratio_points)
             ax.set_xlim(0, variable)  # Set x-axis limits
             fig.tight_layout()
-            print(fig)
-            print(ax)
+
 
             canvas = FigureCanvasTkAgg(fig, master=Sharpe_ratio_frame)
             canvas.draw()
             Sharpe_ratio_label.pack(side='top',fill='both')
             canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
+            Sharpe_ratio_label.metadata = {'y_data':(ax.lines)[0].get_ydata()}
     
             Sharpe_ratio_frame.pack(side='top', fill='both', expand=True,padx=(0,15))
 
