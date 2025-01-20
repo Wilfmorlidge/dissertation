@@ -126,8 +126,9 @@ def calculate_output_data(database,model,outer_counter):
         pertubation_sum += np.linalg.norm(database['pertubed_images'][inner_counter]-database['unpertubed_images'][inner_counter])
         if this_class == database['classifications'][inner_counter]:
             accuracy += 1
+            misplaceed_confidence_sum += 0.0
         else:
-            misplaceed_confidence_sum = np.max(scores[inner_counter])
+            misplaceed_confidence_sum += np.max(scores[inner_counter])
         classes.append(this_class)
 
 

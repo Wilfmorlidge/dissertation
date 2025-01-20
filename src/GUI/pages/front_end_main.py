@@ -12,6 +12,7 @@ def initialise_front_end():
     window(root)
     landing_page(root)
     root.mainloop()
+    
 
 if __name__ == "__main__":
     initialise_front_end()
