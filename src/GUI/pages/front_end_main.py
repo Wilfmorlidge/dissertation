@@ -12,7 +12,8 @@ def initialise_front_end():
     window(root)
     landing_page(root)
     root.mainloop()
-    
+
+#2.12.0rc0    
 
 if __name__ == "__main__":
     initialise_front_end()
