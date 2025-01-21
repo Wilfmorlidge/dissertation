@@ -46,5 +46,39 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
             pertubed_label.pack(side = 'left',padx=(0,10),pady=(22.5,22.5))
             image_container.pack(side = 'top')
             container_container.pack(side='top',expand=True,fill='x',pady=(0,30),padx=(22.5,22.5))
-    
+
+
+    print(root.winfo_children())
+    for widget in root.winfo_children():
+        canvas_width = variable.winfo_width() 
+        canvas_height = variable.winfo_height() 
+        x_scroll = variable.canvasx(0) 
+        y_scroll = variable.canvasy(0) # Calculate the visible region 
+        visible_region = (x_scroll, y_scroll, x_scroll + canvas_width, y_scroll + canvas_height)
+
+
+        x = widget.winfo_x() 
+        y = widget.winfo_y() 
+        width = widget.winfo_width()
+        height = widget.winfo_height()
+        widget_bbox = (x, y, x + width, y + height)
+
+        print(widget_bbox)
+        print(visible_region)
+
+        #    widget_height = widget.winfo_height() + widget.pack_info().get('pady', 0)
+        #    if (widget_bbox[2] > canvas_bbox[0] and widget_bbox[0] < canvas_bbox[2] and widget_bbox[3] > canvas_bbox[1] and widget_bbox[1] < canvas_bbox[3]):
+        #        root.pack_configure(pady = root.pack_info().get('pady', 0) - widget_height)
+        #        try:
+        #            widget.pack(side='top',expand=True,fill='x',pady=(0,30),padx=(22.5,22.5))
+        #        except:
+        #            nothing = None
+        #    else:
+        #        root.pack_configure(pady = root.pack_info().get('pady', 0) + widget_height)
+        #        try:
+        #            widget.pack_forget()
+        #        except:
+        #            nothing = None
+
+        
     root.after(500, lambda: update_image_display_entries(root,display_width,entry_height,dictionary, variable,display_height))

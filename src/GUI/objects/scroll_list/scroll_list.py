@@ -24,6 +24,11 @@ def callback_exception_frame(list_frame,exception_frame,display_object,total_hei
         exception_frame.pack(side='bottom', fill='x',pady=(0,(max((display_object.winfo_height()-current_total_height),0))))  # Re-pack it at the bottom
     list_frame.after(100,lambda: callback_exception_frame(list_frame,exception_frame,display_object,current_total_height))
 
+
+    #pack all elements
+    # get the first element in the list and return its size and y padding
+    # unpack elements not on screen, adding y padding to list_frame as we go
+
 def scroll_list(root,display_width, display_height ,entry_height, dictionary, variable, entry_function):
     #this section puts the frame containing the scroll list entries into a scrollable canvas, and updates the canvases configure to make it 
     # changes shape with the frame.
@@ -49,6 +54,10 @@ def scroll_list(root,display_width, display_height ,entry_height, dictionary, va
     # this determines what kind of entries will be in the scroll list, and then calls the appropriate function
     # this doesn't feel very exstensible so i will try to refactor it after i have finished a first pass at the entire
     # front end
+
+    if variable == None:
+        variable = canvas
+
     entry_function(list_frame,display_width,entry_height, dictionary, variable,display_height)
 
     root.update_idletasks()

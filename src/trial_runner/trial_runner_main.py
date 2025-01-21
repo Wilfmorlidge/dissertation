@@ -8,6 +8,7 @@ import itertools
 import os
 import threading
 from threading import Event
+import shutil
 
 
 print('is this instance running with cuda' + str(tf.test.is_built_with_cuda()))
@@ -27,6 +28,10 @@ def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_
                 hyperparameter_settings[counter] = list(itertools.islice(itertools.cycle(hyperparameter_settings[counter]), iteration_number))
         else:
             hyperparameter_settings[counter] = [None] * iteration_number
+
+
+    if os.path.exists('./results'):
+        shutil.rmtree('./results')
 
     os.makedirs('./results', exist_ok=True)
     with open(f'./results/cumulative_metrics.txt', "w") as file:
