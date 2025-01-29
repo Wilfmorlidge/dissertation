@@ -51,6 +51,10 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
                 image_container.pack(side = 'top')
                 container_container.pack(side='top',expand=True,fill='x',pady=(0,30),padx=(22.5,22.5))
                 variable[2].append(container_container)
+            
+            root.update()
+
+            lazy_load_entries(root,display_width,entry_height,dictionary, variable,display_height,top_frame,bottom_frame)
         root.after(500, lambda: create_new_entries(root,display_width,entry_height,dictionary, variable,display_height))
 
 
@@ -62,18 +66,22 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
         bottom_padding = 0
         entries_to_be_rendered = []
 
+        print(str(len(variable[2])))
+
         canvas_width = variable[0].winfo_width() 
         canvas_height = variable[0].winfo_height() 
         x_scroll = variable[0].canvasx(0) 
         y_scroll = variable[0].canvasy(0) # Calculate the visible region 
-        visible_region = [x_scroll, y_scroll -150, x_scroll + canvas_width, y_scroll + canvas_height + 150]
+        visible_region = [x_scroll, y_scroll -500, x_scroll + canvas_width, y_scroll + canvas_height + 500]
 
         print(visible_region)
         print('top of canvas height' + str(current_widget_height))
 
+        counter = 0
+
         for widget in variable[2]:
-            print(variable[2])
-            print('beginning run')
+            counter += 1
+            print(counter)
             if not(widget.winfo_name() == 'exception_frame') and not(widget.winfo_name() == 'top_frame') and not(widget.winfo_name() == 'bottom_frame'):
                 print('accessing element')
 
