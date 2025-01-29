@@ -3,10 +3,25 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import time
 
+
 def update_image_display_entries(root,display_width,entry_height,dictionary, variable, display_height):
 
+    def load_current_page_of_entries(root,display_width,entry_height,dictionary, variable, display_height,page_number):
+        for widget in root.winfo_children():
+            if not(widget.winfo_name() == 'exception_frame') and not(widget.winfo_name() == 'page_button_container'):
+                widget.destroy()
 
-    def construct_entries(root,display_width,entry_height,dictionary, entry, display_height):
+        print(len(variable[2]))
+        print(variable[2])
+        print(page_number)
+
+        for counter in range((150*page_number),min((len(variable[2])-1),((150*page_number)+150))):
+            print(counter)
+            construct_entry(root,display_width,entry_height,dictionary, variable[2][counter], display_height)
+
+
+
+    def construct_entry(root,display_width,entry_height,dictionary, entry, display_height):
         container_container = tk.Frame(root,bg='dimgray')
         listing_container = tk.Frame(container_container, height = int(entry_height * 1/5))
         listing = tk.Label(listing_container,text=f"{entry[0]}:{entry[1]}")
@@ -41,7 +56,7 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
         container_container.pack(side='top',expand=True,fill='x',pady=(0,30),padx=(22.5,22.5))
 
 
-    def calculate_new_entries(root,display_width,entry_height,dictionary, variable, display_height):
+    def calculate_new_entries(root,display_width,entry_height,dictionary, variable, display_height,page_number):
         while not dictionary.empty():
             current_trial = dictionary.get()
             file_count = 0
@@ -53,9 +68,8 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
             for counter in range(0,file_count):
                 variable[2].append([current_trial,counter])
             
-
-            lazy_load_entries(root,display_width,entry_height,dictionary, variable,display_height)
-        root.after(500, lambda: calculate_new_entries(root,display_width,entry_height,dictionary, variable,display_height))
+            load_current_page_of_entries(root,display_width,entry_height,dictionary, variable,display_height,page_number[0])
+        root.after(500, lambda: calculate_new_entries(root,display_width,entry_height,dictionary, variable,display_height,page_number))
 
 
 
@@ -105,8 +119,10 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
         top_frame = tk.Frame(root,name='top_frame',bg='green')
         top_frame.pack(side='top', pady=(top_padding,0))
 
+        print(entries_to_be_rendered)
+
         for entry in entries_to_be_rendered:
-            construct_entries(root,display_width,entry_height,dictionary, entry, display_height)
+            construct_entry(root,display_width,entry_height,dictionary, entry, display_height)
 
 
         bottom_frame = tk.Frame(root,name='bottom_frame',bg='blue')
@@ -115,10 +131,30 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
         root.update()
         
 
+
+    def increase_page_number(root,display_width,entry_height,dictionary, variable,display_height,page_number):
+        if ((page_number[0]+1)*150) <= len(variable[2]):
+            page_number[0] += 1
+            load_current_page_of_entries(root,display_width,entry_height,dictionary, variable,display_height,page_number[0])
+
+
+    def decrease_page_number(root,display_width,entry_height,dictionary, variable,display_height,page_number):
+        if page_number[0] > 0:
+            page_number[0] += -1
+            load_current_page_of_entries(root,display_width,entry_height,dictionary, variable,display_height,page_number[0])
             
+    page_number = [0]
 
 
+    frame = tk.Frame(root,name='page_button_container')
+    frame.pack(side='bottom')
+
+    left_button = tk.Button(frame, text="<<",command = lambda: decrease_page_number(root,display_width,entry_height,dictionary, variable,display_height,page_number))
+    left_button.pack(side='left')
+
+    right_button = tk.Button(frame, text=">>",command = lambda: increase_page_number(root,display_width,entry_height,dictionary, variable,display_height,page_number))
+    right_button.pack(side='left')
 
 
-    variable[1].bind("<ButtonRelease-1>", lambda event: lazy_load_entries(root,display_width,entry_height,dictionary, variable,display_height))
-    root.after(500, lambda: calculate_new_entries(root,display_width,entry_height,dictionary, variable,display_height))
+    #variable[1].bind("<ButtonRelease-1>", lambda event: lazy_load_entries(root,display_width,entry_height,dictionary, variable,display_height))
+    root.after(500, lambda: calculate_new_entries(root,display_width,entry_height,dictionary, variable,display_height,page_number))

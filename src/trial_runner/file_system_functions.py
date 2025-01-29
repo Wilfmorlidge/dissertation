@@ -75,7 +75,7 @@ def append_images(database,inner_counter,directory_string):
 
 def denormalize_and_save_image(image,ident,destination):
     display_2 = Image.fromarray(((image - image.min()) / (image.max() - image.min()) * 255).astype(np.uint8))
-    display_2.save(f'{destination}/image_{ident}.png')
+    display_2.save(f'{destination}/image_{ident}.png',quality=20)
 
 
 def resize_image(image):
