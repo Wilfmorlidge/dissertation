@@ -56,7 +56,7 @@ def scroll_list(root,display_width, display_height ,entry_height, dictionary, va
     # front end
 
     if variable == None:
-        variable = [canvas,scrollbar,[0]]
+        variable = [canvas,scrollbar,[]]
 
     entry_function(list_frame,display_width,entry_height, dictionary, variable,display_height)
 

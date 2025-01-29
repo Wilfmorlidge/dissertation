@@ -57,23 +57,10 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
 
     def lazy_load_entries(root,display_width,entry_height,dictionary, variable, display_height,top_frame,bottom_frame):
 
-        for widget in variable[2]:
-           if not(widget.winfo_name() == 'exception_frame'):
-                # we will need to create an ordered list of widgets so that things are still packed in the correct order
-                try:
-                    widget.pack(side='top',expand=True,fill='x',pady=(0,30),padx=(22.5,22.5))
-
-                    root.update_idletasks()
-                    root.update()
-                except:
-                    nothing = None
-
-
         current_widget_height = (variable[0].bbox("all")[1]) -137
         top_padding = 0
         bottom_padding = 0
-        top_frame = tk.Frame(root,name='top_frame',bg='green')
-        entries_to_be_rendered = [top_frame]
+        entries_to_be_rendered = []
 
         canvas_width = variable[0].winfo_width() 
         canvas_height = variable[0].winfo_height() 
@@ -101,11 +88,28 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
                 else:
                     entries_to_be_rendered.append(widget)
                     current_widget_height += entry_height + 30
+
+        for widget in root.winfo_children():
+            try:
+                widget.pack_forget()
+            except:
+                nothing = None
+        
+        top_frame.pack(side='top', pady=(top_padding,0))
+
+        for widget in entries_to_be_rendered:
+            widget.pack(side='top',expand=True,fill='x',pady=(0,30),padx=(22.5,22.5))
+
+        bottom_frame.pack(side='top', pady=(0,bottom_padding))
+
+        root.update()
+        
+
             
 
 
     top_frame = tk.Frame(root,name='top_frame',bg='green')
     bottom_frame = tk.Frame(root,name='bottom_frame',bg='blue')
 
-    variable[1].bind("<ButtonRelease-1>", lambda event: lazy_load_entries(root,display_width,entry_height,dictionary, variable,display_height))
+    variable[1].bind("<ButtonRelease-1>", lambda event: lazy_load_entries(root,display_width,entry_height,dictionary, variable,display_height,top_frame,bottom_frame))
     root.after(500, lambda: create_new_entries(root,display_width,entry_height,dictionary, variable,display_height))
