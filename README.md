@@ -4,13 +4,10 @@ cudatoolkit 11.2
 cudnn 8.1.0
 anaconda
 python 3.9.20
-  tensorflow 2.10.1
-    tensorflow datasets 4.9.4
-  numpy 1.26.2
-  matplotlib 3.8.1
-  pillow 10.1.0
 
   GPU with a compute of 7.5 or greater
+
+  you will also need WSL2 on Windows if you want tensorflow to run with GPU support
 
 installation:
 for ease of use it is recommended to use visual studio code when loading this project
