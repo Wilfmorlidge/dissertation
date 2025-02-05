@@ -110,6 +110,15 @@ def calculate_output_data(database,model,outer_counter):
 
     
     print('life is without meaning')
+    print(type(np.array(database['pertubed_images'])))
+    print((np.array(database['pertubed_images'])).shape)
+    print(str(np.array(database['pertubed_images'])))
+    print(type((np.array(database['pertubed_images']))[0]))
+    thing = (np.array(database['pertubed_images']))
+    for counter in range(0,len(thing)-1):
+        print(thing[counter])
+        print((thing[counter]).shape)
+    #print(((np.array(database['pertubed_images']))[0]).shape)
     scores = model.predict(np.array(database['pertubed_images']))
     # provide human readable results
     confidences = []

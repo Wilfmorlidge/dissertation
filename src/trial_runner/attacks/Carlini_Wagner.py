@@ -117,6 +117,8 @@ def Carlini_Wagner_iteration_step(image,classification,model, class_list, learni
         if (np.linalg.norm(image-true_image) < perubation_cap):
             return image, pertubation_delta
         else:
-            return true_image, np.zeros((image.shape))
+            print('my names jeff')
+            print(true_image.shape)
+            return np.squeeze(true_image,axis=0), np.zeros((image.shape))
 
 
