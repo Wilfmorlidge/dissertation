@@ -47,15 +47,6 @@ def DeepFool_iteration_step(image,classification,model, class_list, overshoot_sc
         loop_counter = 0
         cumulative_pertubation = np.zeros((image.shape))
 
-        #this section checks for unspecified parameter values and sets them to default
-        if overshoot_scalar == None:
-            overshoot_scalar = 0.2
-        if pertubation_cap == None:
-             pertubation_cap = 1000.0
-        if maximal_loop == None:
-             maximal_loop = 50
-
-
         print('this is the overshoot scalar' + str(overshoot_scalar))
         print(pertubation_cap)
         print(maximal_loop)

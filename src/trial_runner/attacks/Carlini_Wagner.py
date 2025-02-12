@@ -66,20 +66,6 @@ def update_loss_function(image, pertubed_image, model, learning_rate, target_cla
 
 def Carlini_Wagner_iteration_step(image,classification,model, class_list, learning_rate, starting_points,temperature, k,perubation_cap, maximal_loop):
        
-        # this section checks if hyperparameters are undefined and sets them to default
-        if learning_rate == None:
-             learning_rate = 100.0
-        if starting_points == None:
-            starting_points = 1.0
-        if temperature == None:
-            temperature = 1
-        if k == None:
-            k = 0.2
-        if perubation_cap == None:
-            perubation_cap = 1000.0
-        if maximal_loop == None:
-            maximal_loop = 50
-       
         np.set_printoptions(precision=20)
         current_class_list = np.copy(class_list).tolist()
         current_class_list.remove(classification)

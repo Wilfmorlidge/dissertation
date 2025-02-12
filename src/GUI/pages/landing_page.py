@@ -34,12 +34,21 @@ def create_hyperparameter_list(right_frame,selected_attack,root,previous_selecte
     root.after(100,lambda: create_hyperparameter_list(right_frame,selected_attack,root,previous_selected_attack,hyperparameter_settings))
 
 
-def continue_button_activity_check(root,continue_button,selected_model,selected_attack):
+def continue_button_activity_check(root,continue_button,selected_model,selected_attack,hyperparameter_settings):
+    # this checks if the simple to check selections have been made
     if selected_model != [None] and selected_attack != [None]:
-        continue_button.config(state=tk.NORMAL,bg='gray95')
+        # this checks if the hyperparameter form is full
+        flag = 0
+        for i in range(len(hyperparameter_settings)):
+            print(hyperparameter_settings[i])
+            value = hyperparameter_settings[i].get(0.0,'end')
+            if value.strip() == "":
+                flag = 1
+        if flag == 0:
+            continue_button.config(state=tk.NORMAL,bg='gray95')
     else: 
         continue_button.config(state=tk.DISABLED,bg='gray30')
-    root.after(100, lambda: continue_button_activity_check(root,continue_button,selected_model,selected_attack))
+    root.after(100, lambda: continue_button_activity_check(root,continue_button,selected_model,selected_attack,hyperparameter_settings))
 
 def move_to_output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number):
     print(selected_attack)
@@ -55,10 +64,7 @@ def move_to_output_page(root,selected_attack,selected_model,hyperparameter_setti
         # this gets the value in text field i and converts it into a list of floats (under the assumption that the entry to the field is in csv float format)
         # then splits the string into substrings via commas and converts the substrings to floats
         value = hyperparameter_settings[i].get(0.0,'end')
-        if value.strip() == "":
-            hyperparameter_settings[i] = []
-        else:
-            hyperparameter_settings[i] = [float(x) for x in value.split(',')]
+        hyperparameter_settings[i] = [float(x) for x in value.split(',')]
     print(hyperparameter_settings)
     output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number)
 
@@ -122,7 +128,7 @@ def landing_page(root):
 
     # this section calls back to check whether the continue button should appear disabled
 
-    root.after(100,lambda: continue_button_activity_check(root,continue_button,selected_model,selected_attack))
+    root.after(100,lambda: continue_button_activity_check(root,continue_button,selected_model,selected_attack,hyperparameter_settings))
 
     iteration_size_scale_container.pack(side='top',pady=(10,0))
     iteration_number_scale_container.pack(side='top',pady=(100,0))

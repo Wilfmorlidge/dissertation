@@ -15,4 +15,5 @@ def multi_input_scroll_list_entries(list_frame,display_width,entry_height, dicti
         label.pack(side = 'top',fill='x', expand=(True))
         Text_widget.pack(side = 'top',fill='x', expand=(True))
         bounding_frame.pack(side = 'top',fill='x', expand=(True))
+        Text_widget.insert(tk.END, value[0])
         variable.append(Text_widget)

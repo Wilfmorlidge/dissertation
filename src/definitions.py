@@ -9,20 +9,20 @@ attack_dictionary = {
     'DeepFool' : {
         'algorithm': DeepFool_iteration_step,
         'hyperparameters': {
-            'overshoot_scalar': [],
-            'pertubation_cap': [],
-            'maximum_loop': [],
+            'overshoot_scalar': [0.2],
+            'pertubation_cap': [1000.0],
+            'maximum_loop': [50.0],
             }
         },
     'Carlini_Wagner' : {
         'algorithm':Carlini_Wagner_iteration_step,
         'hyperparameters': {
-            'learning_rate': [],
-            'starting_points': [],
-            'temperature': [],
-            'k': [],
-            'pertubation_cap': [],
-            'maximal_loop': []
+            'learning_rate': [10000.0],
+            'starting_points': [1.0],
+            'temperature': [1.0],
+            'k': [0.2],
+            'pertubation_cap': [1000.0],
+            'maximal_loop': [50.0]
             }
         } 
     }
