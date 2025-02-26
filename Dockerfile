@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1
 
 RUN python --version
 
-ENV DISPLAY=:0
+ENV DISPLAY=host.docker.internal:0.0
 
 # Install pip requirements
 RUN pip install pip==25.0.1
