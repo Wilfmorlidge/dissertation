@@ -11,8 +11,7 @@ from threading import Event
 import shutil
 
 
-print('is this instance running with cuda' + str(tf.test.is_built_with_cuda()))
-print('available GPUs: ' + str(tf.config.list_physical_devices('GPU')))
+
 
 def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_model,hyperparameter_settings,image_queue,graph_queue,progress_bar_queue,thread_killing_event):
     # this section clips the input hyperparameters, so that if not enough values are provided they cycle,
@@ -48,7 +47,7 @@ def back_end_main_loop(iteration_size,iteration_number,selected_attack,selected_
 
 
 def run_adversarial_trial(iteration_size,selected_attack,selected_model,trial_hyperparameters,counter):
-    print(trial_hyperparameters)
+
     #this loads the database
     database, info = tfds.load('imagenette/320px-v2', split='validation', shuffle_files=True, with_info=True)
     class_list = [0,217,482,491,497,566,569,571,574,701]
@@ -60,8 +59,7 @@ def run_adversarial_trial(iteration_size,selected_attack,selected_model,trial_hy
     # this acquires the model
 
     # this applies adversarial pertubation
-    print(selected_attack[1])
-    print(selected_model[1])
+
     final_database = generate_pertubations(normalized_database,selected_model[1],selected_attack[1]['algorithm'],class_list,trial_hyperparameters)
 
     # this tests the pertubed data against the network

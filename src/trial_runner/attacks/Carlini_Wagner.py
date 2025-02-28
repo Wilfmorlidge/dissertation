@@ -60,7 +60,7 @@ def update_loss_function(image, pertubed_image, model, learning_rate, target_cla
     pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(pertubed_image, -pertubation_delta)
     scores = model(pertubed_image)
     loss = np.linalg.norm(image - pertubed_image) + (learning_rate *max((max(np.delete(scores,target_class)) -scores[:1,target_class]),k))
-    print('this is the loss' + str(loss))
+
     return image, pertubed_image, pertubation_delta, loss, scores
 
 
@@ -74,25 +74,24 @@ def Carlini_Wagner_iteration_step(image,classification,model, class_list, learni
         true_image = np.expand_dims(image,axis=0)
         outer_counter = 0
         outputs= []
-        print(target_class)
-        print(classification)#
+
 
         #this section causes the gradient descent to be started from multiple points
         for entry in positions:
-            print('now entering gradient descent trial ' + str(outer_counter))
+
             outer_counter += 1
             pertubation_delta = np.expand_dims(entry, axis=0)
             image = true_image
             pertubed_image = perform_arbitary_precision_addtion_of_numpy_arrays(image, pertubation_delta)
             scores = model(pertubed_image)
-            print(np.argmax(scores))
+
             loss = np.linalg.norm(image - pertubed_image) + (learning_rate *max((max(np.delete(scores,target_class)) -scores[:1,target_class]),k))
             inner_counter = 0
 
             # this section calculates the derivative of the loss for the current image, and adds this as a pertubation, before checking
             # if the result correctly missclassifies the image.
             while ((np.argmax(scores) == classification)) and (inner_counter < maximal_loop):
-                print('now entering pertubation cycle ' + str(inner_counter))
+
                 inner_counter += 1
                 image, pertubed_image, pertubation_delta,loss,scores = update_loss_function(image, pertubed_image, model, learning_rate, target_class, k)
             outputs.append((pertubed_image,loss,pertubation_delta))
@@ -103,8 +102,7 @@ def Carlini_Wagner_iteration_step(image,classification,model, class_list, learni
         if (np.linalg.norm(image-true_image) < perubation_cap):
             return image, pertubation_delta
         else:
-            print('my names jeff')
-            print(true_image.shape)
+
             return np.squeeze(true_image,axis=0), np.zeros((image.shape))
 
 

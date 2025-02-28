@@ -14,9 +14,7 @@ def create_hyperparameter_list(right_frame,selected_attack,root,previous_selecte
     #this is a self calling function which runs in a child thread and watches for changes in the attack selection
 
     #this if statements makes sure nothing happens when the attack has not been changed since the last run of this function
-    #print(selected_attack)
-    #print(previous_selected_attack)
-    #print("--------------------------")
+
     if (selected_attack[0] != previous_selected_attack[0]):
         # where the attack has changed the current hyeprparameter list is deleted
         for widget in right_frame.winfo_children():
@@ -40,7 +38,7 @@ def continue_button_activity_check(root,continue_button,selected_model,selected_
         # this checks if the hyperparameter form is full
         flag = 0
         for i in range(len(hyperparameter_settings)):
-            print(hyperparameter_settings[i])
+
             value = hyperparameter_settings[i].get(0.0,'end')
             if value.strip() == "":
                 flag = 1
@@ -51,10 +49,7 @@ def continue_button_activity_check(root,continue_button,selected_model,selected_
     root.after(100, lambda: continue_button_activity_check(root,continue_button,selected_model,selected_attack,hyperparameter_settings))
 
 def move_to_output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number):
-    print(selected_attack)
-    print(selected_model)
-    print(iteration_number.get())
-    print(iteration_size.get())
+
 
     from GUI.pages.output_page import output_page
 
@@ -65,7 +60,7 @@ def move_to_output_page(root,selected_attack,selected_model,hyperparameter_setti
         # then splits the string into substrings via commas and converts the substrings to floats
         value = hyperparameter_settings[i].get(0.0,'end')
         hyperparameter_settings[i] = [float(x) for x in value.split(',')]
-    print(hyperparameter_settings)
+
     output_page(root,selected_attack,selected_model,hyperparameter_settings,iteration_size,iteration_number)
 
 def landing_page(root):

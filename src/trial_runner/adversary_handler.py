@@ -13,7 +13,6 @@ def generate_pertubations(database,selected_model,selected_attack,class_list,tri
 
             #this causes the pertubation to be calculated
 
-            print('pertubing image:' + str(iteration))
             pertubed_image, pertubation = selected_attack(image,database['classifications'][iteration],selected_model,class_list,*trial_hyperparameters)
 
 

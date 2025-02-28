@@ -84,7 +84,6 @@ def graph_display_scroll_list_entries(list_frame,display_width,entry_height, dic
             ax.plot(GMQ_points)
             ax.set_xlim(0, variable)  # Set x-axis limits
             fig.tight_layout()
-            print((ax.lines)[0].get_ydata())
 
             canvas = FigureCanvasTkAgg(fig, master=GMQ_frame)
             canvas.draw()

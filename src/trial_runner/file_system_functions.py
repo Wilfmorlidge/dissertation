@@ -98,7 +98,7 @@ def normalize_database(unnormalised_database,length,model_string,class_list, inf
         # Get the preprocess_input function
         pre_processing_method = getattr(module, 'preprocess_input')
         counter += 1
-        print('currently processing image #' + str(counter))
+
         normalized_database['images'].append(np.array(pre_processing_method(resize_image(entry['image']))))
         fixed_label = re_label_image(entry['label'], class_list)
         normalized_database['classifications'].append(fixed_label)
@@ -109,16 +109,9 @@ def normalize_database(unnormalised_database,length,model_string,class_list, inf
 def calculate_output_data(database,model,outer_counter):
 
     
-    print('life is without meaning')
-    print(type(np.array(database['pertubed_images'])))
-    print((np.array(database['pertubed_images'])).shape)
-    print(str(np.array(database['pertubed_images'])))
-    print(type((np.array(database['pertubed_images']))[0]))
+
     thing = (np.array(database['pertubed_images']))
-    for counter in range(0,len(thing)-1):
-        print(thing[counter])
-        print((thing[counter]).shape)
-    #print(((np.array(database['pertubed_images']))[0]).shape)
+
     scores = model.predict(np.array(database['pertubed_images']))
     # provide human readable results
     confidences = []
@@ -130,8 +123,8 @@ def calculate_output_data(database,model,outer_counter):
     os.makedirs(directory_string, exist_ok=True)
     for inner_counter in range(0,len(scores)):
         append_images(database,inner_counter,directory_string)
-        confidences.append(np.max(scores[inner_counter]))
-        this_class = np.argmax(scores[inner_counter])
+        confidences.append(float(np.max(scores[inner_counter])))
+        this_class = float(np.argmax(scores[inner_counter]))
         pertubation_sum += np.linalg.norm(database['pertubed_images'][inner_counter]-database['unpertubed_images'][inner_counter])
         if this_class == database['classifications'][inner_counter]:
             accuracy += 1
@@ -141,9 +134,9 @@ def calculate_output_data(database,model,outer_counter):
         classes.append(this_class)
 
 
-    accuracy = accuracy / len(scores)
-    GMQ = misplaceed_confidence_sum / len(scores)
-    mean_pertubation = pertubation_sum / len(scores)
+    accuracy = float(accuracy / len(scores))
+    GMQ = float(misplaceed_confidence_sum / len(scores))
+    mean_pertubation = float(pertubation_sum / len(scores))
     dictionary = {
                   'confidences': confidences,
                   'classes': classes,
@@ -160,7 +153,6 @@ def calculate_output_data(database,model,outer_counter):
     with open(f'{directory_string}/metrics.txt', "w") as file:
         file.write(str(dictionary))
 
-    print('yee')
 
 
 

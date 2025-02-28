@@ -11,12 +11,9 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
             if not(widget.winfo_name() == 'exception_frame') and not(widget.winfo_name() == 'page_button_container'):
                 widget.destroy()
 
-        print(len(variable[2]))
-        print(variable[2])
-        print(page_number)
+
 
         for counter in range((150*page_number),min((len(variable[2])-1),((150*page_number)+150))):
-            print(counter)
             construct_entry(root,display_width,entry_height,dictionary, variable[2][counter], display_height)
 
 
@@ -80,7 +77,6 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
         bottom_padding = 0
         entries_to_be_rendered = []
 
-        print(str(len(variable[2])))
 
         canvas_width = variable[0].winfo_width() 
         canvas_height = variable[0].winfo_height() 
@@ -88,22 +84,17 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
         y_scroll = variable[0].canvasy(0) # Calculate the visible region 
         visible_region = [x_scroll, y_scroll -500, x_scroll + canvas_width, y_scroll + canvas_height + 500]
 
-        print(visible_region)
-        print('top of canvas height' + str(current_widget_height))
 
         counter = 0
 
         for widget in variable[2]:
             counter += 1
-            print(counter)
-            print('accessing element')
+
 
             if (current_widget_height + entry_height) < visible_region[1]:
-                print('this element is too high')
                 top_padding += entry_height + 30
                 current_widget_height += entry_height + 30
             elif current_widget_height > visible_region[3]:
-                print('this element is too low')
                 bottom_padding += entry_height + 30
                 current_widget_height += entry_height + 30
             else:
@@ -114,12 +105,11 @@ def update_image_display_entries(root,display_width,entry_height,dictionary, var
             if not(widget.winfo_name() == 'exception_frame'):
                 widget.destroy()
         
-        print(root.winfo_children())
 
         top_frame = tk.Frame(root,name='top_frame',bg='green')
         top_frame.pack(side='top', pady=(top_padding,0))
 
-        print(entries_to_be_rendered)
+
 
         for entry in entries_to_be_rendered:
             construct_entry(root,display_width,entry_height,dictionary, entry, display_height)

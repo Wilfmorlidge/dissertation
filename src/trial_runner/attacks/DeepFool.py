@@ -47,16 +47,14 @@ def DeepFool_iteration_step(image,classification,model, class_list, overshoot_sc
         loop_counter = 0
         cumulative_pertubation = np.zeros((image.shape))
 
-        print('this is the overshoot scalar' + str(overshoot_scalar))
-        print(pertubation_cap)
-        print(maximal_loop)
+
 
         
 
 
         while ((loop_counter < maximal_loop) and (np.argmax(scores) == classification)):
             loop_counter += 1
-            print('now entering pertubation cycle ' + str(loop_counter))
+
             logit_derivative_for_true_class = find_logit_derivative_value(image,classification,model)
             #this iterates though all possible classes for each image
         
