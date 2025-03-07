@@ -27,8 +27,13 @@ for ease of use it is recommended to use visual studio code when loading this pr
 simple installation:
 1) acquire visual studio code from here: https://code.visualstudio.com/
 2) once installed, find the extensions tab in the vertical toolbar, search python and install.
-3) click file in the horizontal toolbar at the top, then open folder.
-4) 
+3) download all the files in the 'master dictionary refactor' branch of the github (click on the icon that by default says main and scroll to this one)
+4) put those files in a single folder
+5) back in vs-code click file in the horizontal toolbar at the top, then open folder, navigate into the folder you just created
+6) in the same hotbar, click terminal + new terminal
+7) paste pip pip install -r windows_requirements.txt into the field that pops up and click enter
+8) once that is finished put python src\\GUI\\pages\\front_end_main.py in the same field
+9) the application window should now open and you can follow the steps in 'running'
 
 running:
 1) run front_end_main.py
