@@ -1,15 +1,4 @@
-pre-requisties:
-cuda 11.X
-cudatoolkit 11.2
-cudnn 8.1.0
-anaconda
-python 3.9.20
-
-  GPU with a compute of 7.5 or greater
-
-  you will also need WSL2 on Windows if you want tensorflow to run with GPU support
-
-installation:
+advanced installation: (high performance)
 for ease of use it is recommended to use visual studio code when loading this project
 
 1) install anaconda https://www.anaconda.com/download
@@ -34,6 +23,12 @@ for ease of use it is recommended to use visual studio code when loading this pr
     your GPU, if tensorflow has not discoverd your GPU then follow these instructions: https://medium.com/analytics-vidhya/solution-to-tensorflow-2-not-using-gpu-119fb3e04daa
 
 7) run pip install -r requirements.txt to install python library dependencies.
+
+simple installation:
+1) acquire visual studio code from here: https://code.visualstudio.com/
+2) once installed, find the extensions tab in the vertical toolbar, search python and install.
+3) click file in the horizontal toolbar at the top, then open folder.
+4) 
 
 running:
 1) run front_end_main.py
