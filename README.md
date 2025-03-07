@@ -22,7 +22,7 @@ for ease of use it is recommended to use visual studio code when loading this pr
 6) verify cuda by checking that running nvcc --version returns your cuda version, then run trial_runner_main on its own to ensure tensorflow has discoverd
     your GPU, if tensorflow has not discoverd your GPU then follow these instructions: https://medium.com/analytics-vidhya/solution-to-tensorflow-2-not-using-gpu-119fb3e04daa
 
-7) run pip install -r requirements.txt to install python library dependencies.
+7) run pip install -r windows_high_performance_requirements.txt --ignore-requires-python (or pip install -r linux_native_requirements.txt --ignore-requires-python if on linux)  to install python library dependencies.
 
 simple installation:
 1) acquire visual studio code from here: https://code.visualstudio.com/
